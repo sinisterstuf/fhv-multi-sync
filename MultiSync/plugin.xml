@@ -23,7 +23,7 @@
          point="org.eclipse.ui.views">
       <view
             name="View"
-            class="at.fhv.multisync.View"
+            class="at.fhv.multisync.ui.views.View"
             id="MultiSync.view">
       </view>
    </extension>

@@ -1,4 +1,4 @@
-package at.fhv.multisync;
+package at.fhv.multisync.ui.views;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
