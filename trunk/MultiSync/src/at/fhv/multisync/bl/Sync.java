@@ -293,7 +293,7 @@ public class Sync {
 		}
 
 		/* process target directory/file */
-		for (String slave : job.getSlave()) {
+		for (String slave : job.getSlaves()) {
 
 			Sync.target = new File(slave);
 
@@ -319,44 +319,6 @@ public class Sync {
 				break;
 			}
 
-		}
-
-	}
-
-	private static void determineSynchronizationMode() {
-		/* determine synchronization mode */
-		if (Sync.source.isDirectory()) {
-			/* source is a directory; must check that target is NOT a file */
-			if (Sync.target.exists() && !Sync.target.isDirectory())
-				throw new TerminatingException(
-						"Target \""
-								+ Sync.target.getPath()
-								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory.");
-
-			/* DIRECTORY synchronization */
-			Sync.syncMode = Sync.SyncMode.DIRECTORY;
-			Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
-					.getPath()) + File.separatorChar;
-			Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
-					.getPath()) + File.separatorChar;
-		} else if (source.exists()) {
-			/* source is a file; must check that target is NOT a directory */
-			if (Sync.target.isDirectory())
-				throw new TerminatingException(
-						"Target \""
-								+ Sync.target.getPath()
-								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file.");
-
-			/* FILE synchronization */
-			Sync.syncMode = Sync.SyncMode.FILE;
-			Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
-					.getPath());
-			Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
-					.getPath());
-		} else {
-			/* source does not exist */
-			throw new TerminatingException("Source \"" + Sync.source.getPath()
-					+ "\" does not exist.");
 		}
 
 	}
@@ -986,6 +948,44 @@ public class Sync {
 		/* create name-only FileUnit comparator */
 		Sync.nameOnlyFileUnitComparator = new FileUnitComparator(true, false,
 				false, false);
+	}
+
+	private static void determineSynchronizationMode() {
+		/* determine synchronization mode */
+		if (Sync.source.isDirectory()) {
+			/* source is a directory; must check that target is NOT a file */
+			if (Sync.target.exists() && !Sync.target.isDirectory())
+				throw new TerminatingException(
+						"Target \""
+								+ Sync.target.getPath()
+								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory.");
+
+			/* DIRECTORY synchronization */
+			Sync.syncMode = Sync.SyncMode.DIRECTORY;
+			Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
+					.getPath()) + File.separatorChar;
+			Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
+					.getPath()) + File.separatorChar;
+		} else if (source.exists()) {
+			/* source is a file; must check that target is NOT a directory */
+			if (Sync.target.isDirectory())
+				throw new TerminatingException(
+						"Target \""
+								+ Sync.target.getPath()
+								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file.");
+
+			/* FILE synchronization */
+			Sync.syncMode = Sync.SyncMode.FILE;
+			Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
+					.getPath());
+			Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
+					.getPath());
+		} else {
+			/* source does not exist */
+			throw new TerminatingException("Source \"" + Sync.source.getPath()
+					+ "\" does not exist.");
+		}
+
 	}
 
 	/**
