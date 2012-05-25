@@ -1,6 +1,7 @@
 package at.fhv.multisync.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 
@@ -10,6 +11,9 @@ import java.io.Serializable;
  */
 public class Job implements Serializable {
 	private static final long serialVersionUID = -5521745757247879979L;
+
+	private String _master;
+	private List<String> _slave;
 
 	/**
 	 * Default constructor.

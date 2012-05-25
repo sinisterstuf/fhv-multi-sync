@@ -1,5 +1,6 @@
 package at.fhv.multisync.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,8 +10,12 @@ import java.util.List;
  * 
  * @author Michael Sieber
  */
-public class JobGroup {
+public class JobGroup implements Serializable {
+	private static final long serialVersionUID = -3930715948623517171L;
+
 	private final List<Job> _jobs;
+
+	private String _name;
 
 	/**
 	 * Default constructor.
@@ -22,7 +27,8 @@ public class JobGroup {
 	/**
 	 * Add a job to the group.
 	 * 
-	 * @param job The job to add
+	 * @param job
+	 *            The job to add
 	 */
 	public void addJob(Job job) {
 		if (!_jobs.contains(job)) {
@@ -33,7 +39,8 @@ public class JobGroup {
 	/**
 	 * Remove a job from the group.
 	 * 
-	 * @param job The job to remove
+	 * @param job
+	 *            The job to remove
 	 */
 	public void removeJob(Job job) {
 		if (_jobs.contains(job)) {
