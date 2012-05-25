@@ -16,7 +16,7 @@ public class MessagePopupAction extends Action {
         setId(ICommandIds.CMD_OpenMessage);
         // Associate the action with a pre-defined command, to allow key bindings.
         setActionDefinitionId(ICommandIds.CMD_OpenMessage);
-        //setImageDescriptor(testtoolbar.Activator.getImageDescriptor("/icons/sample3.gif"));
+		setImageDescriptor(at.fhv.multisync.Activator.getImageDescriptor("/icons/widescreen.gif"));
     }
 
     public void run() {
