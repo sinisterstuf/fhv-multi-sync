@@ -25,6 +25,20 @@ public class JobGroup implements Serializable {
 	}
 
 	/**
+	 * Save this jobGroup by serializing it to the file system.
+	 */
+	public void save() {
+		// TODO implement
+	}
+
+	/**
+	 * Load the jobGroup
+	 */
+	public void load() {
+		// TODO implement
+	}
+
+	/**
 	 * Add a job to the group.
 	 * 
 	 * @param job

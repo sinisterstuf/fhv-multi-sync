@@ -25,20 +25,6 @@ public class Job implements Serializable {
 	}
 
 	/**
-	 * Save this job by serializing it to the file system.
-	 */
-	public void save() {
-		// TODO implement
-	}
-
-	/**
-	 * Load the job
-	 */
-	public void load() {
-		// TODO implement
-	}
-
-	/**
 	 * Run this job.
 	 */
 	public void run() {
