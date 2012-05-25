@@ -94,7 +94,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.help.helpContents"
-                  label="Help!"
+                  label="Contents"
                   style="push">
             </command>
          </menu>
@@ -112,6 +112,14 @@
             </command>
          </toolbar>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            extradir="help/toc.xml"
+            file="help/toc.xml"
+            primary="true">
+      </toc>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

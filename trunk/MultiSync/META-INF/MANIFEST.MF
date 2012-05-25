@@ -5,6 +5,10 @@ Bundle-SymbolicName: MultiSync; singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: at.fhv.multisync.Activator
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.help,
+ org.eclipse.help.ui;bundle-version="3.5.101",
+ org.eclipse.help.appserver;bundle-version="3.1.400",
+ org.eclipse.help.webapp;bundle-version="3.6.1"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

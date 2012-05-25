@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<toc label="MultiSync" topic="help/root.html">
+   <topic href="help/intro.html" label="Introduction">
+   </topic>
+   <topic href="help/syncing.html" label="Syncing Files">
+      <topic href="help/filebrowser.html" label="The File Browser">
+      </topic>
+   </topic>
+</toc>
