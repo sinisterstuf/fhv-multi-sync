@@ -9,6 +9,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class JobExplorer extends ViewPart {
 	private Tree _jobTree;
+	public static final String ID = "MultiSync.view.JobExplorer";
 
 	public JobExplorer() {
 	}

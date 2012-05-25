@@ -10,6 +10,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class LogView extends ViewPart {
 	private Table _logTable;
+	public static final String ID = "MultiSync.view.LogView";
 
 	public LogView() {
 	}
