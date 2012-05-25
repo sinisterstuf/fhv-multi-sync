@@ -326,16 +326,25 @@ public class Sync {
 				Sync.defaultActionOnRenameMatched = 'N';
 			}
 
-			/* perform synchronization */
-			switch (Sync.syncMode) {
-			case DIRECTORY:
-				syncDirectory();
-				break;
-
-			case FILE:
-				syncFile();
-				break;
+			if (job.isOverwriteTarget()) {
+				Sync.defaultActionOnOverwrite = 'Y';
+			} else {
+				Sync.defaultActionOnOverwrite = 'N';
 			}
+
+			/* perform synchronization */
+			// ------------------------------------------
+			// enable when all properties are implemented
+			// ------------------------------------------
+			// switch (Sync.syncMode) {
+			// case DIRECTORY:
+			// syncDirectory();
+			// break;
+			//
+			// case FILE:
+			// syncFile();
+			// break;
+			// }
 
 		}
 
@@ -362,7 +371,6 @@ public class Sync {
 			final String sw = args[i];
 
 			if ("--simulate".equals(sw) || "-s".equals(sw)) {
-
 			} else if (sw.startsWith("--time:")) {
 				/*
 				 * use specified time-tolerance (in milliseconds) for
@@ -405,26 +413,6 @@ public class Sync {
 							"Invalid --synctime parameter \""
 									+ a
 									+ "\":\nParameter must be \"y\" or \"n\", e.g. --synctime:y."
-									+ howHelp);
-				}
-			} else if (sw.startsWith("--overwrite:")) {
-				/* overwrite existing target files? */
-				final String a = sw.substring(sw.indexOf(':') + 1);
-
-				if (a.isEmpty())
-					throw new TerminatingException(
-							"Empty --overwrite parameter:\nParameter must be \"y\" or \"n\", e.g. --overwrite:y."
-									+ howHelp);
-
-				if ("y".equals(a)) {
-					Sync.defaultActionOnOverwrite = 'Y';
-				} else if ("n".equals(a)) {
-					Sync.defaultActionOnOverwrite = 'N';
-				} else {
-					throw new TerminatingException(
-							"Invalid --overwrite parameter \""
-									+ a
-									+ "\":\nParameter must be \"y\" or \"n\", e.g. --overwrite:y."
 									+ howHelp);
 				}
 			} else if (sw.startsWith("--delete:")) {

@@ -32,6 +32,8 @@ public class Job implements Serializable {
 	private boolean _matchCrc;
 	/* rename matched target files? */
 	private boolean _renameTarget;
+	/* overwrite existing target files? */
+	private boolean _overwriteTarget;
 
 	/**
 	 * Default constructor.
@@ -81,5 +83,9 @@ public class Job implements Serializable {
 
 	public boolean isRenameTarget() {
 		return this._renameTarget;
+	}
+
+	public boolean isOverwriteTarget() {
+		return this._overwriteTarget;
 	}
 }
