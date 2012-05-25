@@ -1,0 +1,10 @@
+#summary List of web tools we're using for this project and where to find them
+
+= Introduction =
+
+This is a list of web tools we're using for this project and where to find them.
+
+= List =
+
+  * [http://scrumy.com/multi-sync Scrum Board]
+  * [http://webchat.freenode.net/?channels=multi-sync Web Chat]
