@@ -3,6 +3,8 @@ package at.fhv.multisync.model;
 import java.io.Serializable;
 import java.util.List;
 
+import at.fhv.multisync.bl.Sync;
+
 /**
  * 
  * This class represents a single sync job.
@@ -40,6 +42,9 @@ public class Job implements Serializable {
 	 * Run this job.
 	 */
 	public void run() {
-		// TODO implement
+		Sync sync = new Sync();
+		for (String slave : _slave) {
+			sync.sync(_master, slave);
+		}
 	}
 }
