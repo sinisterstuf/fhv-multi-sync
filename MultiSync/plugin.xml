@@ -99,6 +99,19 @@
             </command>
          </menu>
       </menuContribution>
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar.org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="at.fhv.multisync.maintoolbar"
+               label="Toolbar">
+            <command
+                  commandId="at.multisync.openmsg"
+                  icon="icons/widescreen.png"
+                  style="push">
+            </command>
+         </toolbar>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

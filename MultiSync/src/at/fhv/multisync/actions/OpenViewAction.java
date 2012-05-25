@@ -21,7 +21,7 @@ public class OpenViewAction extends Action {
 		setId(ICommandIds.CMD_OpenView);
         // Associate the action with a pre-defined command, to allow key bindings.
 		setActionDefinitionId(ICommandIds.CMD_OpenView);
-		//setImageDescriptor(testtoolbar.Activator.getImageDescriptor("/icons/sample2.gif"));
+		setImageDescriptor(at.fhv.multisync.Activator.getImageDescriptor("/icons/panel.gif"));
 	}
 	
 	public void run() {
