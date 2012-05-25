@@ -273,6 +273,32 @@ public class Sync {
 		System.exit(exitCode);
 	}
 
+	public void sync(String source, String target) {
+		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
+
+		/* process source directory/file */
+		Sync.source = new File(source);
+
+		try {
+			Sync.source = Sync.source.getCanonicalFile();
+		} catch (Exception e) {
+			throw new TerminatingException("Source \"" + Sync.source.getPath()
+					+ "\" is not a valid directory/file:\n"
+					+ getExceptionMessage(e) + howHelp);
+		}
+
+		/* process target directory/file */
+		Sync.target = new File(target);
+
+		try {
+			Sync.target = Sync.target.getCanonicalFile();
+		} catch (Exception e) {
+			throw new TerminatingException("Target \"" + Sync.target.getPath()
+					+ "\" is not a valid directory/file:\n"
+					+ getExceptionMessage(e) + howHelp);
+		}
+	}
+
 	/**
 	 * Process command-line arguments and configure synchronization parameters.
 	 * 
