@@ -29,6 +29,7 @@ package at.fhv.multisync.bl;
  * should be allowed to propagate to the top-level for proper handling.
  */
 class TerminatingException extends RuntimeException {
+	private static final long serialVersionUID = -8518698313062979332L;
 	/** exit status code to be reported to the OS */
 	private final int exitCode;
 

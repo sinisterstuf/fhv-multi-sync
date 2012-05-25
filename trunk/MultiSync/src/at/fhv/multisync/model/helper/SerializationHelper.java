@@ -26,9 +26,8 @@ public class SerializationHelper {
 
 	static {
 		try {
-			URL url =
-					new URL(Platform.getInstallLocation().getURL()
-							+ Platform.getProduct().getName());
+			URL url = new URL(Platform.getInstallLocation().getURL()
+					+ Platform.getProduct().getName());
 			DEFAULT_LOCATION = url.toString();
 		} catch (MalformedURLException e) {
 			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay()
@@ -48,7 +47,8 @@ public class SerializationHelper {
 	/**
 	 * Serialize an object to the default location
 	 * 
-	 * @param object The object to serialize
+	 * @param object
+	 *            The object to serialize
 	 */
 	public static void serialize(Serializable object) {
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
@@ -95,10 +95,11 @@ public class SerializationHelper {
 	 * 
 	 * @return A list of all serialized object in the folder.
 	 */
-	public static List<Object> deserialize() {
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> deserialize() {
 		FileInputStream fIn = null;
 		ObjectInputStream objIn = null;
-		List<Object> out = new ArrayList<Object>();
+		List<T> out = new ArrayList<T>();
 
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
 			try {
@@ -112,7 +113,7 @@ public class SerializationHelper {
 						fIn = new FileInputStream(file);
 						objIn = new ObjectInputStream(fIn);
 
-						Object tmp = objIn.readObject();
+						T tmp = (T) objIn.readObject();
 						out.add(tmp);
 					}
 					// process single file
@@ -121,7 +122,7 @@ public class SerializationHelper {
 					fIn = new FileInputStream(location);
 					objIn = new ObjectInputStream(fIn);
 
-					Object tmp = objIn.readObject();
+					T tmp = (T) objIn.readObject();
 					out.add(tmp);
 				}
 			} catch (Exception e) {
