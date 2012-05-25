@@ -17,6 +17,7 @@ public class Job implements Serializable {
 	private String _master;
 	private List<String> _slave;
 	private boolean _simulateOnly;
+	private boolean _ignoreWarnings;
 
 	/**
 	 * Default constructor.
@@ -40,5 +41,13 @@ public class Job implements Serializable {
 
 	public String getMaster() {
 		return this._master;
+	}
+
+	public boolean isSimulateOnly() {
+		return this._simulateOnly;
+	}
+
+	public boolean isIgnoreWarnings() {
+		return this._ignoreWarnings;
 	}
 }

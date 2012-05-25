@@ -277,16 +277,12 @@ public class Sync {
 
 	public static void syncJob(Job job) {
 
-		for (String slave : job.getSlave()) {
-			initSync(job.getMaster(), slave);
-		}
-
-	}
-
-	public static void initSync(String source, String target) {
-
 		/* process source directory/file */
-		Sync.source = new File(source);
+		Sync.source = new File(job.getMaster());
+
+		/* simulate only; do not modify target */
+		Sync.simulateOnly = job.isSimulateOnly();
+		Sync.ignoreWarnings = job.isIgnoreWarnings();
 
 		try {
 			Sync.source = Sync.source.getCanonicalFile();
@@ -297,17 +293,34 @@ public class Sync {
 		}
 
 		/* process target directory/file */
-		Sync.target = new File(target);
+		for (String slave : job.getSlave()) {
 
-		try {
-			Sync.target = Sync.target.getCanonicalFile();
-		} catch (Exception e) {
-			throw new TerminatingException("Target \"" + Sync.target.getPath()
-					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e));
+			Sync.target = new File(slave);
+
+			try {
+				Sync.target = Sync.target.getCanonicalFile();
+			} catch (Exception e) {
+				throw new TerminatingException("Target \""
+						+ Sync.target.getPath()
+						+ "\" is not a valid directory/file:\n"
+						+ getExceptionMessage(e));
+			}
+
+			determineSynchronizationMode();
+
+			/* perform synchronization */
+			switch (Sync.syncMode) {
+			case DIRECTORY:
+				syncDirectory();
+				break;
+
+			case FILE:
+				syncFile();
+				break;
+			}
+
 		}
 
-		determineSynchronizationMode();
 	}
 
 	private static void determineSynchronizationMode() {
@@ -369,9 +382,9 @@ public class Sync {
 			final String sw = args[i];
 
 			if ("--simulate".equals(sw) || "-s".equals(sw)) {
-				/* simulate only; do not modify target */
-				Sync.simulateOnly = true;
-				Sync.ignoreWarnings = true;
+				// /* simulate only; do not modify target */
+				// Sync.simulateOnly = true;
+				// Sync.ignoreWarnings = true;
 			} else if ("--ignorewarnings".equals(sw)) {
 				/* ignore warnings; do not pause */
 				Sync.ignoreWarnings = true;
