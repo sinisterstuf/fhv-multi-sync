@@ -42,6 +42,7 @@
                closeable="true"
                id="MultiSync.view.LogView"
                minimized="false"
+               ratio="0.7"
                relationship="bottom"
                relative="org.eclipse.ui.editorss"
                visible="true">
@@ -50,6 +51,7 @@
                closeable="true"
                id="MultiSync.view.JobExplorer"
                minimized="false"
+               ratio="0.3"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                visible="true">
