@@ -16,6 +16,7 @@ public class Job implements Serializable {
 
 	private String _master;
 	private List<String> _slave;
+	private boolean _simulateOnly;
 
 	/**
 	 * Default constructor.
@@ -31,5 +32,13 @@ public class Job implements Serializable {
 		for (String slave : _slave) {
 			Sync.sync(_master, slave);
 		}
+	}
+
+	public List<String> getSlave() {
+		return this._slave;
+	}
+
+	public String getMaster() {
+		return this._master;
 	}
 }

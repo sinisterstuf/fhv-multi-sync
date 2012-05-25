@@ -41,6 +41,8 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.PatternSyntaxException;
 
+import at.fhv.multisync.model.Job;
+
 /**
  * Sync performs one-way directory or file synchronization.
  */
@@ -273,6 +275,14 @@ public class Sync {
 		System.exit(exitCode);
 	}
 
+	public static void syncJob(Job job) {
+
+		for (String slave : job.getSlave()) {
+			Sync.sync(job.getMaster(), slave);
+		}
+
+	}
+
 	public static void sync(String source, String target) {
 
 		/* process source directory/file */
@@ -346,79 +356,6 @@ public class Sync {
 	 */
 	private static void processArguments(final String[] args) {
 		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
-
-		// /* SyncIO.print usage documentation, if no arguments */
-		// if (args.length == 0) {
-		// printUsage();
-		// throw new TerminatingException(null, 0);
-		// }
-
-		// /* check if sufficient arguments */
-		// if (args.length < 2)
-		// throw new TerminatingException(
-		// "Insufficient arguments:\nThe source and target directories/files must be specified."
-		// + howHelp);
-
-		// /* process source directory/file */
-		// Sync.source = new File(args[args.length - 2]);
-		//
-		// try {
-		// Sync.source = Sync.source.getCanonicalFile();
-		// } catch (Exception e) {
-		// throw new TerminatingException("Source \"" + Sync.source.getPath()
-		// + "\" is not a valid directory/file:\n"
-		// + getExceptionMessage(e) + howHelp);
-		// }
-
-		// /* process target directory/file */
-		// Sync.target = new File(args[args.length - 1]);
-		//
-		// try {
-		// Sync.target = Sync.target.getCanonicalFile();
-		// } catch (Exception e) {
-		// throw new TerminatingException("Target \"" + Sync.target.getPath()
-		// + "\" is not a valid directory/file:\n"
-		// + getExceptionMessage(e) + howHelp);
-		// }
-
-		// /* determine synchronization mode */
-		// if (Sync.source.isDirectory()) {
-		// /* source is a directory; must check that target is NOT a file */
-		// if (Sync.target.exists() && !Sync.target.isDirectory())
-		// throw new TerminatingException(
-		// "Target \""
-		// + Sync.target.getPath()
-		// +
-		// "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory."
-		// + howHelp);
-		//
-		// /* DIRECTORY synchronization */
-		// Sync.syncMode = Sync.SyncMode.DIRECTORY;
-		// Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
-		// .getPath()) + File.separatorChar;
-		// Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
-		// .getPath()) + File.separatorChar;
-		// } else if (source.exists()) {
-		// /* source is a file; must check that target is NOT a directory */
-		// if (Sync.target.isDirectory())
-		// throw new TerminatingException(
-		// "Target \""
-		// + Sync.target.getPath()
-		// +
-		// "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file."
-		// + howHelp);
-		//
-		// /* FILE synchronization */
-		// Sync.syncMode = Sync.SyncMode.FILE;
-		// Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
-		// .getPath());
-		// Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
-		// .getPath());
-		// } else {
-		// /* source does not exist */
-		// throw new TerminatingException("Source \"" + Sync.source.getPath()
-		// + "\" does not exist." + howHelp);
-		// }
 
 		/* initialize filename filters */
 		final List<String> includeSource = new ArrayList<String>();
