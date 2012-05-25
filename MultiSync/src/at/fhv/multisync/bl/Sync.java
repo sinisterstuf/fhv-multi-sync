@@ -278,12 +278,12 @@ public class Sync {
 	public static void syncJob(Job job) {
 
 		for (String slave : job.getSlave()) {
-			Sync.sync(job.getMaster(), slave);
+			initSync(job.getMaster(), slave);
 		}
 
 	}
 
-	public static void sync(String source, String target) {
+	public static void initSync(String source, String target) {
 
 		/* process source directory/file */
 		Sync.source = new File(source);
