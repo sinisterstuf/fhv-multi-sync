@@ -28,9 +28,8 @@ public class Job implements Serializable {
 	 * Run this job.
 	 */
 	public void run() {
-		Sync sync = new Sync();
 		for (String slave : _slave) {
-			sync.sync(_master, slave);
+			Sync.sync(_master, slave);
 		}
 	}
 }
