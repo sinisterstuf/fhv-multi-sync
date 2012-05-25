@@ -72,7 +72,7 @@
          <menu
                label="Edit">
             <command
-                  commandId="MultiSync.Job.Edit"
+                  commandId="at.multisync.job.edit"
                   label="Edit Job"
                   style="push">
             </command>
@@ -99,6 +99,24 @@
             </command>
          </menu>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            description="Opens a view"
+            id="at.multisync.openview"
+            name="ShowView">
+      </command>
+      <command
+            description="shows a message"
+            id="at.multisync.openmsg"
+            name="msg">
+      </command>
+      <command
+            description="Edits a job"
+            id="at.multisync.job.edit"
+            name="Edit job">
+      </command>
    </extension>
 
 </plugin>
