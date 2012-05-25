@@ -320,12 +320,14 @@ public class Sync {
 			/* do not use CRC-32 checksum for file-matching */
 			Sync.matchCrc = job.isMatchCrc();
 
+			/* rename matched target files? */
 			if (job.isRenameTarget()) {
 				Sync.defaultActionOnRenameMatched = 'Y';
 			} else {
 				Sync.defaultActionOnRenameMatched = 'N';
 			}
 
+			/* overwrite existing target files? */
 			if (job.isOverwriteTarget()) {
 				Sync.defaultActionOnOverwrite = 'Y';
 			} else {
