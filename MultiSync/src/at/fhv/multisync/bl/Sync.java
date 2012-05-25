@@ -273,7 +273,7 @@ public class Sync {
 		System.exit(exitCode);
 	}
 
-	public void sync(String source, String target) {
+	public static void sync(String source, String target) {
 
 		/* process source directory/file */
 		Sync.source = new File(source);
@@ -300,7 +300,7 @@ public class Sync {
 		determineSynchronizationMode();
 	}
 
-	private void determineSynchronizationMode() {
+	private static void determineSynchronizationMode() {
 		/* determine synchronization mode */
 		if (Sync.source.isDirectory()) {
 			/* source is a directory; must check that target is NOT a file */
