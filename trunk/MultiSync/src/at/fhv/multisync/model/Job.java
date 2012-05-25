@@ -30,7 +30,7 @@ public class Job implements Serializable {
 	 */
 	public void run() {
 		for (String slave : _slave) {
-			Sync.sync(_master, slave);
+			Sync.syncJob(this);
 		}
 	}
 
