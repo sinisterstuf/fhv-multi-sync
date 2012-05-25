@@ -21,11 +21,23 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <view
+            class="at.fhv.multisync.ui.views.LogView"
+            id="MultiSync.view.LogView"
+            name="Log"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="*">
+         <view
+               closeable="true"
+               id="MultiSync.view.LogView"
+               minimized="false"
+               relationship="fast">
+         </view>
       </perspectiveExtension>
    </extension>
    <extension
@@ -48,6 +60,15 @@
             </command>
          </menu>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="at.fhv.multisync.ui.editors.JobEditor"
+            default="false"
+            id="MultiSync.editor.JobEditor"
+            name="JobEditor">
+      </editor>
    </extension>
 
 </plugin>
