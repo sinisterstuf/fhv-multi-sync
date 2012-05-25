@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -279,11 +278,6 @@ public class Sync {
 
 		/* process source directory/file */
 		Sync.source = new File(job.getMaster());
-
-		/* simulate only; do not modify target */
-		Sync.simulateOnly = job.isSimulateOnly();
-		Sync.ignoreWarnings = job.isIgnoreWarnings();
-
 		try {
 			Sync.source = Sync.source.getCanonicalFile();
 		} catch (Exception e) {
@@ -306,7 +300,31 @@ public class Sync {
 						+ getExceptionMessage(e));
 			}
 
+			/* simulate only; do not modify target */
+			Sync.simulateOnly = job.isSimulateOnly();
+
+			/* ignore warnings; do not pause */
+			Sync.ignoreWarnings = job.isIgnoreWarnings();
+
 			determineSynchronizationMode();
+
+			/* do not recurse into subdirectories */
+			Sync.noRecurse = job.isNoRecurse();
+
+			/* do not use filename for file-matching */
+			Sync.matchName = job.isMatchName();
+
+			/* do not use last-modified time for file-matching */
+			Sync.matchTime = job.isMatchTime();
+
+			/* do not use CRC-32 checksum for file-matching */
+			Sync.matchCrc = job.isMatchCrc();
+
+			if (job.isRenameTarget()) {
+				Sync.defaultActionOnRenameMatched = 'Y';
+			} else {
+				Sync.defaultActionOnRenameMatched = 'N';
+			}
 
 			/* perform synchronization */
 			switch (Sync.syncMode) {
@@ -344,97 +362,7 @@ public class Sync {
 			final String sw = args[i];
 
 			if ("--simulate".equals(sw) || "-s".equals(sw)) {
-				// /* simulate only; do not modify target */
-				// Sync.simulateOnly = true;
-				// Sync.ignoreWarnings = true;
-			} else if ("--ignorewarnings".equals(sw)) {
-				/* ignore warnings; do not pause */
-				Sync.ignoreWarnings = true;
-			} else if ("--log".equals(sw) || "-l".equals(sw)) {
-				/* create log file "sync.yyyyMMdd-HHmmss.log" */
-				if (Sync.logName != null)
-					throw new TerminatingException(
-							"Switch --log can be specified at most once."
-									+ howHelp);
 
-				final String timestamp = String.format(
-						"%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS",
-						Calendar.getInstance(Locale.ENGLISH));
-
-				File f = new File("sync." + timestamp + ".log");
-
-				if (f.exists()) {
-					/* find an unused file name */
-					for (long k = 0; k < Long.MAX_VALUE; k++) {
-						f = new File("sync." + timestamp + "." + k + ".log");
-
-						if (f.exists()) {
-							f = null;
-						} else {
-							/* use this unused name */
-							break;
-						}
-					}
-
-					if (f == null)
-						throw new TerminatingException(
-								"Failed to create an unused filename for log file:\nRan out of suffixes n in \"sync."
-										+ timestamp
-										+ ".n.log\"; try specifying a filename, e.g. --log:\"record.txt\"."
-										+ howHelp);
-				}
-
-				try {
-					Sync.logName = f.getCanonicalPath();
-				} catch (Exception e) {
-					throw new TerminatingException(
-							"Failed to create log file \"" + f.getPath()
-									+ "\":\n" + getExceptionMessage(e)
-									+ howHelp);
-				}
-			} else if (sw.startsWith("--log:") || sw.startsWith("-l:")) {
-				/* create log file with the specified name */
-				if (Sync.logName != null)
-					throw new TerminatingException(
-							"Switch --log can be specified at most once."
-									+ howHelp);
-
-				final String a = sw.substring(sw.indexOf(':') + 1);
-
-				if (a.isEmpty())
-					throw new TerminatingException(
-							"Empty --log parameter:\nA log filename must be specified, e.g. --log:\"record.txt\"."
-									+ howHelp);
-
-				File f = new File(a);
-
-				if (f.exists())
-					throw new TerminatingException(
-							"Log file \""
-									+ f.getPath()
-									+ "\" already exists:\nA nonexistent file must be specified."
-									+ howHelp);
-
-				try {
-					Sync.logName = f.getCanonicalPath();
-				} catch (Exception e) {
-					throw new TerminatingException(
-							"Failed to create log file \"" + f.getPath()
-									+ "\":\n" + getExceptionMessage(e)
-									+ howHelp);
-				}
-			} else if ("--norecurse".equals(sw) || "-r".equals(sw)) {
-				/* do not recurse into subdirectories */
-				Sync.noRecurse = true;
-			} else if ("--noname".equals(sw) || "-n".equals(sw)) {
-				/* do not use filename for file-matching */
-				Sync.matchName = false;
-			} else if ("--notime".equals(sw) || "-t".equals(sw)) {
-				/* do not use last-modified time for file-matching */
-				Sync.matchTime = false;
-			} else if ("--nocrc".equals(sw) || "-c".equals(sw)) {
-				/* do not use CRC-32 checksum for file-matching */
-				Sync.matchCrc = false;
 			} else if (sw.startsWith("--time:")) {
 				/*
 				 * use specified time-tolerance (in milliseconds) for
@@ -459,26 +387,6 @@ public class Sync {
 									+ a
 									+ "\":\nTime-tolerance (in milliseconds) must be a nonnegative integer, e.g. --time:2000."
 									+ howHelp);
-			} else if (sw.startsWith("--rename:")) {
-				/* rename matched target files? */
-				final String a = sw.substring(sw.indexOf(':') + 1);
-
-				if (a.isEmpty())
-					throw new TerminatingException(
-							"Empty --rename parameter:\nParameter must be \"y\" or \"n\", e.g. --rename:y."
-									+ howHelp);
-
-				if ("y".equals(a)) {
-					Sync.defaultActionOnRenameMatched = 'Y';
-				} else if ("n".equals(a)) {
-					Sync.defaultActionOnRenameMatched = 'N';
-				} else {
-					throw new TerminatingException(
-							"Invalid --rename parameter \""
-									+ a
-									+ "\":\nParameter must be \"y\" or \"n\", e.g. --rename:y."
-									+ howHelp);
-				}
 			} else if (sw.startsWith("--synctime:")) {
 				/* synchronize time of matched target files? */
 				final String a = sw.substring(sw.indexOf(':') + 1);
