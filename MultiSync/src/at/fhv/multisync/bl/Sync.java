@@ -274,7 +274,6 @@ public class Sync {
 	}
 
 	public void sync(String source, String target) {
-		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
 
 		/* process source directory/file */
 		Sync.source = new File(source);
@@ -284,7 +283,7 @@ public class Sync {
 		} catch (Exception e) {
 			throw new TerminatingException("Source \"" + Sync.source.getPath()
 					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e) + howHelp);
+					+ getExceptionMessage(e));
 		}
 
 		/* process target directory/file */
@@ -295,53 +294,13 @@ public class Sync {
 		} catch (Exception e) {
 			throw new TerminatingException("Target \"" + Sync.target.getPath()
 					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e) + howHelp);
+					+ getExceptionMessage(e));
 		}
+
+		determineSynchronizationMode();
 	}
 
-	/**
-	 * Process command-line arguments and configure synchronization parameters.
-	 * 
-	 * @param args
-	 *            Command-line argument strings
-	 */
-	private static void processArguments(final String[] args) {
-		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
-
-		/* SyncIO.print usage documentation, if no arguments */
-		if (args.length == 0) {
-			printUsage();
-			throw new TerminatingException(null, 0);
-		}
-
-		/* check if sufficient arguments */
-		if (args.length < 2)
-			throw new TerminatingException(
-					"Insufficient arguments:\nThe source and target directories/files must be specified."
-							+ howHelp);
-
-		/* process source directory/file */
-		Sync.source = new File(args[args.length - 2]);
-
-		try {
-			Sync.source = Sync.source.getCanonicalFile();
-		} catch (Exception e) {
-			throw new TerminatingException("Source \"" + Sync.source.getPath()
-					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e) + howHelp);
-		}
-
-		/* process target directory/file */
-		Sync.target = new File(args[args.length - 1]);
-
-		try {
-			Sync.target = Sync.target.getCanonicalFile();
-		} catch (Exception e) {
-			throw new TerminatingException("Target \"" + Sync.target.getPath()
-					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e) + howHelp);
-		}
-
+	private void determineSynchronizationMode() {
 		/* determine synchronization mode */
 		if (Sync.source.isDirectory()) {
 			/* source is a directory; must check that target is NOT a file */
@@ -349,8 +308,7 @@ public class Sync {
 				throw new TerminatingException(
 						"Target \""
 								+ Sync.target.getPath()
-								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory."
-								+ howHelp);
+								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory.");
 
 			/* DIRECTORY synchronization */
 			Sync.syncMode = Sync.SyncMode.DIRECTORY;
@@ -364,8 +322,7 @@ public class Sync {
 				throw new TerminatingException(
 						"Target \""
 								+ Sync.target.getPath()
-								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file."
-								+ howHelp);
+								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file.");
 
 			/* FILE synchronization */
 			Sync.syncMode = Sync.SyncMode.FILE;
@@ -376,8 +333,92 @@ public class Sync {
 		} else {
 			/* source does not exist */
 			throw new TerminatingException("Source \"" + Sync.source.getPath()
-					+ "\" does not exist." + howHelp);
+					+ "\" does not exist.");
 		}
+
+	}
+
+	/**
+	 * Process command-line arguments and configure synchronization parameters.
+	 * 
+	 * @param args
+	 *            Command-line argument strings
+	 */
+	private static void processArguments(final String[] args) {
+		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
+
+		// /* SyncIO.print usage documentation, if no arguments */
+		// if (args.length == 0) {
+		// printUsage();
+		// throw new TerminatingException(null, 0);
+		// }
+
+		// /* check if sufficient arguments */
+		// if (args.length < 2)
+		// throw new TerminatingException(
+		// "Insufficient arguments:\nThe source and target directories/files must be specified."
+		// + howHelp);
+
+		// /* process source directory/file */
+		// Sync.source = new File(args[args.length - 2]);
+		//
+		// try {
+		// Sync.source = Sync.source.getCanonicalFile();
+		// } catch (Exception e) {
+		// throw new TerminatingException("Source \"" + Sync.source.getPath()
+		// + "\" is not a valid directory/file:\n"
+		// + getExceptionMessage(e) + howHelp);
+		// }
+
+		// /* process target directory/file */
+		// Sync.target = new File(args[args.length - 1]);
+		//
+		// try {
+		// Sync.target = Sync.target.getCanonicalFile();
+		// } catch (Exception e) {
+		// throw new TerminatingException("Target \"" + Sync.target.getPath()
+		// + "\" is not a valid directory/file:\n"
+		// + getExceptionMessage(e) + howHelp);
+		// }
+
+		// /* determine synchronization mode */
+		// if (Sync.source.isDirectory()) {
+		// /* source is a directory; must check that target is NOT a file */
+		// if (Sync.target.exists() && !Sync.target.isDirectory())
+		// throw new TerminatingException(
+		// "Target \""
+		// + Sync.target.getPath()
+		// +
+		// "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory."
+		// + howHelp);
+		//
+		// /* DIRECTORY synchronization */
+		// Sync.syncMode = Sync.SyncMode.DIRECTORY;
+		// Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
+		// .getPath()) + File.separatorChar;
+		// Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
+		// .getPath()) + File.separatorChar;
+		// } else if (source.exists()) {
+		// /* source is a file; must check that target is NOT a directory */
+		// if (Sync.target.isDirectory())
+		// throw new TerminatingException(
+		// "Target \""
+		// + Sync.target.getPath()
+		// +
+		// "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file."
+		// + howHelp);
+		//
+		// /* FILE synchronization */
+		// Sync.syncMode = Sync.SyncMode.FILE;
+		// Sync.sourceName = SyncIO.trimTrailingSeparator(Sync.source
+		// .getPath());
+		// Sync.targetName = SyncIO.trimTrailingSeparator(Sync.target
+		// .getPath());
+		// } else {
+		// /* source does not exist */
+		// throw new TerminatingException("Source \"" + Sync.source.getPath()
+		// + "\" does not exist." + howHelp);
+		// }
 
 		/* initialize filename filters */
 		final List<String> includeSource = new ArrayList<String>();
