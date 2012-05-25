@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.fhv.multisync.model.helper.SerializationHelper;
+
 /**
  * 
  * This class represents a group of jobs.
@@ -14,7 +16,6 @@ public class JobGroup implements Serializable {
 	private static final long serialVersionUID = -3930715948623517171L;
 
 	private final List<Job> _jobs;
-
 	private String _name;
 
 	/**
@@ -28,14 +29,7 @@ public class JobGroup implements Serializable {
 	 * Save this jobGroup by serializing it to the file system.
 	 */
 	public void save() {
-		// TODO implement
-	}
-
-	/**
-	 * Load the jobGroup
-	 */
-	public void load() {
-		// TODO implement
+		SerializationHelper.serialize(this);
 	}
 
 	/**
@@ -70,4 +64,33 @@ public class JobGroup implements Serializable {
 			curr.run();
 		}
 	}
+
+	/**
+	 * Get the name of the group
+	 * 
+	 * @return The name of the group
+	 */
+	public String getName() {
+		return _name;
+	}
+
+	/**
+	 * Set the group name
+	 * 
+	 * @param name
+	 *            The name of the group
+	 */
+	public void setName(String name) {
+		_name = name;
+	}
+
+	/**
+	 * Get the jobs of this group
+	 * 
+	 * @return The jobs
+	 */
+	public List<Job> getJobs() {
+		return _jobs;
+	}
+
 }

@@ -14,6 +14,8 @@ import at.fhv.multisync.bl.Sync;
 public class Job implements Serializable {
 	private static final long serialVersionUID = -5521745757247879979L;
 
+	private final String _name;
+
 	/* process source directory/file */
 	private String _master;
 	/* process target directory/file */
@@ -36,10 +38,13 @@ public class Job implements Serializable {
 	private boolean _overwriteTarget;
 
 	/**
-	 * Default constructor.
+	 * Create a new Job
+	 * 
+	 * @param name
+	 *            The name of the job
 	 */
-	public Job() {
-
+	public Job(String name) {
+		_name = name;
 	}
 
 	/**
@@ -87,5 +92,9 @@ public class Job implements Serializable {
 
 	public boolean isOverwriteTarget() {
 		return this._overwriteTarget;
+	}
+
+	public String getName() {
+		return _name;
 	}
 }
