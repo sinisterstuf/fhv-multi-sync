@@ -70,23 +70,35 @@
             </command>
          </menu>
          <menu
-               label="Window">
+               label="Edit">
+            <command
+                  commandId="MultiSync.Job.Edit"
+                  label="Edit Job"
+                  style="push">
+            </command>
+         </menu>
+         <menu
+               label="View">
             <command
                   commandId="org.eclipse.ui.views.showView"
                   label="Show view"
                   style="push">
             </command>
          </menu>
+         <menu
+               label="Help">
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  label="About MultiSync"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.help.helpContents"
+                  label="Help!"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="at.fhv.multisync.ui.editors.JobEditor"
-            default="false"
-            id="MultiSync.editor.JobEditor"
-            name="JobEditor">
-      </editor>
    </extension>
 
 </plugin>
