@@ -15,7 +15,7 @@ public class Job implements Serializable {
 	private static final long serialVersionUID = -5521745757247879979L;
 
 	private String _master;
-	private List<String> _slave;
+	private List<String> _slaves;
 	private boolean _simulateOnly;
 	private boolean _ignoreWarnings;
 
@@ -30,13 +30,11 @@ public class Job implements Serializable {
 	 * Run this job.
 	 */
 	public void run() {
-		for (String slave : _slave) {
-			Sync.syncJob(this);
-		}
+		Sync.syncJob(this);
 	}
 
-	public List<String> getSlave() {
-		return this._slave;
+	public List<String> getSlaves() {
+		return this._slaves;
 	}
 
 	public String getMaster() {
