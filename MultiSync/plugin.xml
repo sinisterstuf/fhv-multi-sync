@@ -27,6 +27,12 @@
             name="Log"
             restorable="true">
       </view>
+      <view
+            class="at.fhv.multisync.ui.views.JobExplorer"
+            id="MultiSync.view.JobExplorer"
+            name="Job Explorer"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
@@ -36,7 +42,17 @@
                closeable="true"
                id="MultiSync.view.LogView"
                minimized="false"
-               relationship="fast">
+               relationship="bottom"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
+         </view>
+         <view
+               closeable="true"
+               id="MultiSync.view.JobExplorer"
+               minimized="false"
+               relationship="left"
+               relative="org.eclipse.ui.editorss"
+               visible="true">
          </view>
       </perspectiveExtension>
    </extension>
