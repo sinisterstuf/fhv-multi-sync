@@ -51,6 +51,14 @@
                   label="Exit">
             </command>
          </menu>
+         <menu
+               label="Window">
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  label="Show view"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
    </extension>
 
