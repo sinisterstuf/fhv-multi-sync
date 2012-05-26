@@ -10,6 +10,10 @@ import at.fhv.multisync.bl.Sync;
  * This class represents a single sync job.
  * 
  * @author Michael Sieber
+ * 
+ * 
+ *         26.05.2012 mwe2644 added all parameters for sync
+ * 
  */
 public class Job implements Serializable {
 	private static final long serialVersionUID = -5521745757247879979L;
@@ -21,14 +25,13 @@ public class Job implements Serializable {
 	/* process target directory/file */
 	private List<String> _slaves;
 
-	
 	/*
 	 * SYNC - PARAMETERS
 	 * 
-	 * For help please visit Class Sync_original: private static void printUsage()
-	 *  
+	 * For help please visit Class Sync_original: private static void
+	 * printUsage()
 	 */
-	
+
 	/* simulate only; do not modify target */
 	private boolean _simulateOnly;
 	/* ignore warnings; do not pause */
