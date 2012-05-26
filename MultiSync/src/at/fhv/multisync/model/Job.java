@@ -20,6 +20,15 @@ public class Job implements Serializable {
 	private String _master;
 	/* process target directory/file */
 	private List<String> _slaves;
+
+	
+	/*
+	 * SYNC - PARAMETERS
+	 * 
+	 * For help please visit Class Sync_original: private static void printUsage()
+	 *  
+	 */
+	
 	/* simulate only; do not modify target */
 	private boolean _simulateOnly;
 	/* ignore warnings; do not pause */
@@ -27,15 +36,31 @@ public class Job implements Serializable {
 	/* do not recurse into subdirectories */
 	private boolean _noRecurse;
 	/* do not use filename for file-matching */
-	private boolean _matchName;
+	private boolean _noNameMatch;
 	/* do not use last-modified time for file-matching */
-	private boolean _matchTime;
+	private boolean _noTimeMatch;
 	/* do not use CRC-32 checksum for file-matching */
-	private boolean _matchCrc;
+	private boolean _noCrcMatch;
 	/* rename matched target files? */
 	private boolean _renameTarget;
 	/* overwrite existing target files? */
 	private boolean _overwriteTarget;
+	/* use std logging */
+	private boolean _stdLog;
+	private String _logFile;
+	/* time-tolerance (in milliseconds) */
+	private long _timeTolerance;
+	private boolean _syncTimeOfTarget;
+	private boolean _deleteTarget;
+	private boolean _filterRelativePathname;
+	private boolean _filterLowerCase;
+	private boolean _regexFilterEnabled;
+	private String _include;
+	private String _exclude;
+	private String _includeSource;
+	private String _excludeSource;
+	private String _includeTarget;
+	private String _excludeTarget;
 
 	/**
 	 * Create a new Job
@@ -52,6 +77,10 @@ public class Job implements Serializable {
 	 */
 	public void run() {
 		Sync.syncJob(this);
+	}
+
+	public String getName() {
+		return _name;
 	}
 
 	public List<String> getSlaves() {
@@ -74,16 +103,16 @@ public class Job implements Serializable {
 		return this._noRecurse;
 	}
 
-	public boolean isMatchName() {
-		return this._matchName;
+	public boolean isNoNameMatch() {
+		return this._noNameMatch;
 	}
 
-	public boolean isMatchTime() {
-		return this._matchTime;
+	public boolean isNoTimeMatch() {
+		return this._noTimeMatch;
 	}
 
-	public boolean isMatchCrc() {
-		return this._matchCrc;
+	public boolean isNoCrcMatch() {
+		return this._noCrcMatch;
 	}
 
 	public boolean isRenameTarget() {
@@ -94,7 +123,59 @@ public class Job implements Serializable {
 		return this._overwriteTarget;
 	}
 
-	public String getName() {
-		return _name;
+	public boolean isStdLog() {
+		return this._stdLog;
+	}
+
+	public String getLogFile() {
+		return this._logFile;
+	}
+
+	public long getTimeTolerance() {
+		return this._timeTolerance;
+	}
+
+	public boolean isSyncTimeOfTarget() {
+		return this._syncTimeOfTarget;
+	}
+
+	public boolean isDeleteTarget() {
+		return this._deleteTarget;
+	}
+
+	public boolean isFilterRelativePathname() {
+		return this._filterRelativePathname;
+	}
+
+	public boolean isFilterLowerCase() {
+		return this._filterLowerCase;
+	}
+
+	public boolean isRegexFilterEnabled() {
+		return this._regexFilterEnabled;
+	}
+
+	public String getInclude() {
+		return this._include;
+	}
+
+	public String getExclude() {
+		return this._exclude;
+	}
+
+	public String getIncludeSource() {
+		return this._includeSource;
+	}
+
+	public String getExcludeSource() {
+		return this._excludeSource;
+	}
+
+	public String getIncludeTarget() {
+		return this._includeTarget;
+	}
+
+	public String getExcludeTarget() {
+		return this._excludeTarget;
 	}
 }
