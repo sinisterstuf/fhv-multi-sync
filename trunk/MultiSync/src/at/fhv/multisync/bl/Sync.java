@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
@@ -38,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.regex.PatternSyntaxException;
 
 import at.fhv.multisync.model.Job;
 
@@ -275,47 +277,7 @@ public class Sync {
 
 	public static void syncJob(Job job) {
 
-		/* process source directory/file */
-		Sync.source = new File(job.getMaster());
-		try {
-			Sync.source = Sync.source.getCanonicalFile();
-		} catch (Exception e) {
-			throw new TerminatingException("Source \"" + Sync.source.getPath()
-					+ "\" is not a valid directory/file:\n"
-					+ getExceptionMessage(e));
-		}
-
-		/* simulate only; do not modify target */
-		Sync.simulateOnly = job.isSimulateOnly();
-
-		/* ignore warnings; do not pause */
-		Sync.ignoreWarnings = job.isIgnoreWarnings();
-
-		/* do not recurse into subdirectories */
-		Sync.noRecurse = job.isNoRecurse();
-
-		/* do not use filename for file-matching */
-		Sync.matchName = job.isMatchName();
-
-		/* do not use last-modified time for file-matching */
-		Sync.matchTime = job.isMatchTime();
-
-		/* do not use CRC-32 checksum for file-matching */
-		Sync.matchCrc = job.isMatchCrc();
-
-		/* rename matched target files? */
-		if (job.isRenameTarget()) {
-			Sync.defaultActionOnRenameMatched = 'Y';
-		} else {
-			Sync.defaultActionOnRenameMatched = 'N';
-		}
-
-		/* overwrite existing target files? */
-		if (job.isOverwriteTarget()) {
-			Sync.defaultActionOnOverwrite = 'Y';
-		} else {
-			Sync.defaultActionOnOverwrite = 'N';
-		}
+		processArguments(job);
 
 		/* process target directory/file */
 		for (String slave : job.getSlaves()) {
@@ -331,34 +293,52 @@ public class Sync {
 						+ getExceptionMessage(e));
 			}
 
-			determineSynchronizationMode();
-
-			/* initialize filename filters */
-			final List<String> includeSource = new ArrayList<String>();
-			final List<String> excludeSource = new ArrayList<String>();
-			final List<String> includeTarget = new ArrayList<String>();
-			final List<String> excludeTarget = new ArrayList<String>();
-			boolean regexFilter = false;
-
 			/* perform synchronization */
-			// ------------------------------------------
-			// enable when all properties are implemented
-			// ------------------------------------------
-			// switch (Sync.syncMode) {
-			// case DIRECTORY:
-			// syncDirectory();
-			// break;
-			//
-			// case FILE:
-			// syncFile();
-			// break;
-			// }
+			switch (Sync.syncMode) {
+			case DIRECTORY:
+				syncDirectory();
+				break;
+
+			case FILE:
+				syncFile();
+				break;
+			}
 
 		}
 
 	}
 
-	private static void determineSynchronizationMode() {
+	/**
+	 * Process command-line arguments and configure synchronization parameters.
+	 * 
+	 * @param args
+	 *            Command-line argument strings
+	 */
+	private static void processArguments(final Job job) {
+		final String howHelp = "\nTo display help, run Sync without any command-line arguments.";
+
+		/* process source directory/file */
+		Sync.source = new File(job.getMaster());
+
+		try {
+			Sync.source = Sync.source.getCanonicalFile();
+		} catch (Exception e) {
+			throw new TerminatingException("Source \"" + Sync.source.getPath()
+					+ "\" is not a valid directory/file:\n"
+					+ getExceptionMessage(e) + howHelp);
+		}
+
+		/* process target directory/file */
+		Sync.target = new File(job.getSlaves().get(0));
+
+		try {
+			Sync.target = Sync.target.getCanonicalFile();
+		} catch (Exception e) {
+			throw new TerminatingException("Target \"" + Sync.target.getPath()
+					+ "\" is not a valid directory/file:\n"
+					+ getExceptionMessage(e) + howHelp);
+		}
+
 		/* determine synchronization mode */
 		if (Sync.source.isDirectory()) {
 			/* source is a directory; must check that target is NOT a file */
@@ -366,7 +346,8 @@ public class Sync {
 				throw new TerminatingException(
 						"Target \""
 								+ Sync.target.getPath()
-								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory.");
+								+ "\" is a file.\nFor DIRECTORY synchronization, the target (if it exists) must also be a directory."
+								+ howHelp);
 
 			/* DIRECTORY synchronization */
 			Sync.syncMode = Sync.SyncMode.DIRECTORY;
@@ -380,7 +361,8 @@ public class Sync {
 				throw new TerminatingException(
 						"Target \""
 								+ Sync.target.getPath()
-								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file.");
+								+ "\" is a directory.\nFor FILE synchronization, the target (if it exists) must also be a file."
+								+ howHelp);
 
 			/* FILE synchronization */
 			Sync.syncMode = Sync.SyncMode.FILE;
@@ -391,9 +373,528 @@ public class Sync {
 		} else {
 			/* source does not exist */
 			throw new TerminatingException("Source \"" + Sync.source.getPath()
-					+ "\" does not exist.");
+					+ "\" does not exist." + howHelp);
 		}
 
+		/* initialize filename filters */
+		final List<String> includeSource = new ArrayList<String>();
+		final List<String> excludeSource = new ArrayList<String>();
+		final List<String> includeTarget = new ArrayList<String>();
+		final List<String> excludeTarget = new ArrayList<String>();
+		boolean regexFilter = false;
+
+		/* process command-line switches */
+
+		/* simulate only; do not modify target */
+		if (job.isSimulateOnly() == true) {
+			Sync.simulateOnly = true;
+			Sync.ignoreWarnings = true;
+		}
+
+		/* ignore warnings; do not pause */
+		Sync.ignoreWarnings = job.isIgnoreWarnings();
+
+		if (job.isStdLog() == true) {
+			/* create log file "sync.yyyyMMdd-HHmmss.log" */
+			if (Sync.logName != null)
+				throw new TerminatingException(
+						"Switch --log can be specified at most once." + howHelp);
+
+			final String timestamp = String.format(
+					"%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS",
+					Calendar.getInstance(Locale.ENGLISH));
+
+			File f = new File("sync." + timestamp + ".log");
+
+			if (f.exists()) {
+				/* find an unused file name */
+				for (long k = 0; k < Long.MAX_VALUE; k++) {
+					f = new File("sync." + timestamp + "." + k + ".log");
+
+					if (f.exists()) {
+						f = null;
+					} else {
+						/* use this unused name */
+						break;
+					}
+				}
+
+				if (f == null)
+					throw new TerminatingException(
+							"Failed to create an unused filename for log file:\nRan out of suffixes n in \"sync."
+									+ timestamp
+									+ ".n.log\"; try specifying a filename, e.g. --log:\"record.txt\"."
+									+ howHelp);
+			}
+
+			try {
+				Sync.logName = f.getCanonicalPath();
+			} catch (Exception e) {
+				throw new TerminatingException("Failed to create log file \""
+						+ f.getPath() + "\":\n" + getExceptionMessage(e)
+						+ howHelp);
+			}
+
+		} else {
+			/* create log file with the specified name */
+			if (Sync.logName != null)
+				throw new TerminatingException(
+						"Switch --log can be specified at most once." + howHelp);
+
+			if (job.getLogFile().isEmpty())
+				throw new TerminatingException(
+						"Empty --log parameter:\nA log filename must be specified, e.g. --log:\"record.txt\"."
+								+ howHelp);
+
+			File f = new File(job.getLogFile());
+
+			if (f.exists())
+				throw new TerminatingException(
+						"Log file \""
+								+ f.getPath()
+								+ "\" already exists:\nA nonexistent file must be specified."
+								+ howHelp);
+
+			try {
+				Sync.logName = f.getCanonicalPath();
+			} catch (Exception e) {
+				throw new TerminatingException("Failed to create log file \""
+						+ f.getPath() + "\":\n" + getExceptionMessage(e)
+						+ howHelp);
+			}
+		}
+
+		/* do not recurse into subdirectories */
+		Sync.noRecurse = job.isNoRecurse();
+
+		/* do not use filename for file-matching */
+		Sync.matchName = job.isNoNameMatch();
+
+		/* do not use last-modified time for file-matching */
+		Sync.matchTime = job.isNoTimeMatch();
+
+		/* do not use CRC-32 checksum for file-matching */
+		Sync.matchCrc = job.isNoCrcMatch();
+
+		/*
+		 * use specified time-tolerance (in milliseconds) for file-matching
+		 */
+		try {
+			Sync.matchTimeTolerance = job.getTimeTolerance();
+		} catch (Exception e) {
+			Sync.matchTimeTolerance = -1L;
+		}
+
+		if (Sync.matchTimeTolerance < 0L) {
+			throw new TerminatingException(
+					"Invalid --time parameter \""
+							+ job.getTimeTolerance()
+							+ "\":\nTime-tolerance (in milliseconds) must be a nonnegative integer, e.g. --time:2000."
+							+ howHelp);
+		}
+
+		/* rename matched target files? */
+		if (job.isRenameTarget() == true) {
+			Sync.defaultActionOnRenameMatched = 'Y';
+		} else {
+			Sync.defaultActionOnRenameMatched = 'N';
+		}
+
+		/* synchronize time of matched target files? */
+		if (job.isSyncTimeOfTarget() == true) {
+			Sync.defaultActionOnTimeSyncMatched = 'Y';
+		} else {
+			Sync.defaultActionOnTimeSyncMatched = 'N';
+		}
+
+		/* overwrite existing target files? */
+		if (job.isOverwriteTarget() == true) {
+			Sync.defaultActionOnOverwrite = 'Y';
+		} else {
+			Sync.defaultActionOnOverwrite = 'N';
+		}
+
+		/* delete unmatched target files/directories? */
+		if (syncMode != syncMode.DIRECTORY)
+			throw new TerminatingException(
+					"Switch --delete can be used for only DIRECTORY synchronization."
+							+ howHelp);
+
+		if (job.isDeleteTarget() == true) {
+			Sync.defaultActionOnDeleteUnmatched = 'Y';
+		} else {
+			Sync.defaultActionOnDeleteUnmatched = 'N';
+		}
+
+		/*
+		 * filter relative pathnames instead of filenames (e.g.
+		 * "work\report\jan.txt" instead of "jan.txt")
+		 */
+		if (job.isFilterRelativePathname() == true) {
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY)
+				throw new TerminatingException(
+						"Switch --path can be used for only DIRECTORY synchronization."
+								+ howHelp);
+
+			Sync.filterRelativePathname = job.isFilterRelativePathname();
+		}
+
+		/*
+		 * use lower case names for filtering (e.g. "HelloWorld2007.JPG" --->
+		 * "helloworld2007.jpg")
+		 */
+		if (job.isFilterLowerCase() == true) {
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY)
+				throw new TerminatingException(
+						"Switch --lower can be used for only DIRECTORY synchronization."
+								+ howHelp);
+
+			Sync.filterLowerCase = job.isFilterLowerCase();
+		}
+
+		/* use REGEX instead of GLOB filename filters */
+		if (job.isRegexFilterEnabled() == true) {
+			regexFilter = true;
+		}
+
+		/*
+		 * include source and target files/directories with names matching
+		 * specified GLOB/REGEX expression
+		 */
+		if (job.getInclude().isEmpty() == false) {
+
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --include can be used for only DIRECTORY synchronization."
+								+ howHelp);
+			}
+
+			includeSource.add(job.getInclude());
+			includeTarget.add(job.getInclude());
+		}
+
+		/*
+		 * exclude source and target files/directories with names matching
+		 * specified GLOB/REGEX expression
+		 */
+		if (job.getExclude().isEmpty() == false) {
+
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --exclude can be used for only DIRECTORY synchronization."
+								+ howHelp);
+			}
+
+			includeSource.add(job.getExclude());
+			includeTarget.add(job.getExclude());
+		}
+
+		if (job.getIncludeSource().isEmpty() == false) {
+
+			/*
+			 * include source files/directories with names matching specified
+			 * GLOB/REGEX expression
+			 */
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --includesource can be used for only DIRECTORY synchronization."
+								+ howHelp);
+			}
+
+			includeSource.add(job.getIncludeSource());
+		}
+
+		/*
+		 * exclude source files/directories with names matching specified
+		 * GLOB/REGEX expression
+		 */
+		if (job.getExcludeSource().isEmpty() == false) {
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --excludesource can be used for only DIRECTORY synchronization."
+								+ howHelp);
+			}
+
+			includeSource.add(job.getExcludeSource());
+		}
+
+		/*
+		 * include target files/directories with names matching specified
+		 * GLOB/REGEX expression
+		 */
+		if (job.getIncludeTarget().isEmpty() == false) {
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --includetarget can be used for only DIRECTORY synchronization."
+								+ howHelp);
+
+			}
+			includeSource.add(job.getIncludeTarget());
+		}
+
+		/*
+		 * exclude target files/directories with names matching specified
+		 * GLOB/REGEX expression
+		 */
+		if (job.getExcludeTarget().isEmpty() == false) {
+			if (Sync.syncMode != Sync.syncMode.DIRECTORY) {
+				throw new TerminatingException(
+						"Switch --excludetarget can be used for only DIRECTORY synchronization."
+								+ howHelp);
+			}
+
+			excludeTarget.add(job.getExcludeTarget());
+		}
+
+		/* process source filename filters, if any */
+		if (includeSource.isEmpty()) {
+			if (excludeSource.isEmpty()) {
+				Sync.sourceFilter = null;
+			} else {
+				Sync.sourceFilter = new FilterNode(FilterNode.LogicType.NOR);
+
+				for (String s : excludeSource) {
+					try {
+						Sync.sourceFilter.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+			}
+		} else {
+			if (excludeSource.isEmpty()) {
+				Sync.sourceFilter = new FilterNode(FilterNode.LogicType.OR);
+
+				for (String s : includeSource) {
+					try {
+						Sync.sourceFilter.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+			} else {
+				final FilterNode includes = new FilterNode(
+						FilterNode.LogicType.OR);
+				final FilterNode excludes = new FilterNode(
+						FilterNode.LogicType.NOR);
+
+				for (String s : includeSource) {
+					try {
+						includes.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+
+				for (String s : excludeSource) {
+					try {
+						excludes.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+
+				Sync.sourceFilter = new FilterNode(FilterNode.LogicType.AND);
+				Sync.sourceFilter.addFilter(includes);
+				Sync.sourceFilter.addFilter(excludes);
+			}
+		}
+
+		/* process target filename filters, if any */
+		if (includeTarget.isEmpty()) {
+			if (excludeTarget.isEmpty()) {
+				Sync.targetFilter = null;
+			} else {
+				Sync.targetFilter = new FilterNode(FilterNode.LogicType.NOR);
+
+				for (String s : excludeTarget) {
+					try {
+						Sync.targetFilter.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+			}
+		} else {
+			if (excludeTarget.isEmpty()) {
+				Sync.targetFilter = new FilterNode(FilterNode.LogicType.OR);
+
+				for (String s : includeTarget) {
+					try {
+						Sync.targetFilter.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+			} else {
+				final FilterNode includes = new FilterNode(
+						FilterNode.LogicType.OR);
+				final FilterNode excludes = new FilterNode(
+						FilterNode.LogicType.NOR);
+
+				for (String s : includeTarget) {
+					try {
+						includes.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+
+				for (String s : excludeTarget) {
+					try {
+						excludes.addFilter(new FilterNode(
+								regexFilter ? FilterNode.FilterType.REGEX
+										: FilterNode.FilterType.GLOB, false,
+								Sync.isWindowsOperatingSystem ? s.replace("/",
+										"\\\\") : s));
+					} catch (PatternSyntaxException e) {
+						throw new TerminatingException(
+								"Failed to compile the specified "
+										+ (regexFilter ? "REGEX" : "GLOB")
+										+ " expression \"" + s + "\":\n"
+										+ getExceptionMessage(e) + howHelp);
+					}
+				}
+
+				Sync.targetFilter = new FilterNode(FilterNode.LogicType.AND);
+				Sync.targetFilter.addFilter(includes);
+				Sync.targetFilter.addFilter(excludes);
+			}
+		}
+
+		/* check certain combinations of switches */
+
+		if ((Sync.sourceFilter == null) && (Sync.targetFilter == null)) {
+			if (Sync.filterRelativePathname)
+				throw new TerminatingException(
+						"Switch --path cannot be used when no filter is specified."
+								+ howHelp);
+
+			if (Sync.filterLowerCase)
+				throw new TerminatingException(
+						"Switch --lower cannot be used when no filter is specified."
+								+ howHelp);
+		}
+
+		if (Sync.simulateOnly) {
+			if (Sync.defaultActionOnRenameMatched != '\0')
+				throw new TerminatingException(
+						"Switch --rename cannot be used in simulation mode."
+								+ howHelp);
+
+			if (Sync.defaultActionOnTimeSyncMatched != '\0')
+				throw new TerminatingException(
+						"Switch --synctime cannot be used in simulation mode."
+								+ howHelp);
+
+			if (Sync.defaultActionOnOverwrite != '\0')
+				throw new TerminatingException(
+						"Switch --overwrite cannot be used in simulation mode."
+								+ howHelp);
+
+			if (Sync.defaultActionOnDeleteUnmatched != '\0')
+				throw new TerminatingException(
+						"Switch --delete cannot be used in simulation mode."
+								+ howHelp);
+
+			Sync.defaultActionOnRenameMatched = 'Y';
+			Sync.defaultActionOnTimeSyncMatched = 'Y';
+			Sync.defaultActionOnOverwrite = 'Y';
+			Sync.defaultActionOnDeleteUnmatched = 'Y';
+		}
+
+		/* prepare log file, if specified */
+		if (Sync.logName != null) {
+			try {
+				Sync.log = new PrintWriter(Sync.logName);
+			} catch (Exception e) {
+				throw new TerminatingException("Failed to create log file \""
+						+ Sync.logName + "\":\n" + getExceptionMessage(e)
+						+ howHelp);
+			}
+		}
+
+		/* disable filename matching for FILE synchronization */
+		if (Sync.syncMode == Sync.syncMode.FILE)
+			Sync.matchName = false;
+
+		/*
+		 * create string representation of match attributes, e.g.
+		 * "(name,size,time,crc)"
+		 */
+		Sync.matchNstcString = getNstcString(Sync.matchName, Sync.matchSize,
+				Sync.matchTime, Sync.matchCrc);
+
+		/* create partial FileUnit comparator for file-matching */
+		Sync.matchFileUnitComparator = new FileUnitComparator(Sync.matchName,
+				Sync.matchSize, Sync.matchTime, Sync.matchCrc);
+
+		/*
+		 * create partial FileUnit comparator for searching (should be a
+		 * "truncated" version of Sync.matchFileUnitComparator)
+		 */
+		Sync.searchFileUnitComparator = new FileUnitComparator(Sync.matchName,
+				Sync.matchSize, false, false);
+
+		/* create name-only FileUnit comparator */
+		Sync.nameOnlyFileUnitComparator = new FileUnitComparator(true, false,
+				false, false);
 	}
 
 	/**
