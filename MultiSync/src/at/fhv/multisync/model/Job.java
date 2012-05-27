@@ -1,6 +1,7 @@
 package at.fhv.multisync.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import at.fhv.multisync.bl.Sync;
@@ -18,12 +19,12 @@ import at.fhv.multisync.bl.Sync;
 public class Job implements Serializable {
 	private static final long serialVersionUID = -5521745757247879979L;
 
-	private final String _name;
+	private String _name;
 
 	/* process source directory/file */
 	private String _master;
 	/* process target directory/file */
-	private List<String> _slaves;
+	private List<String> _slaves = new ArrayList<String>();
 
 	/*
 	 * SYNC - PARAMETERS
@@ -33,36 +34,66 @@ public class Job implements Serializable {
 	 */
 
 	/* simulate only; do not modify target */
-	private boolean _simulateOnly;
+	private boolean _simulateOnly = false;
 	/* ignore warnings; do not pause */
-	private boolean _ignoreWarnings;
+	private boolean _ignoreWarnings = false;
 	/* do not recurse into subdirectories */
-	private boolean _noRecurse;
+	private boolean _noRecurse = false;
 	/* do not use filename for file-matching */
-	private boolean _noNameMatch;
+	private boolean _noNameMatch = true;
 	/* do not use last-modified time for file-matching */
-	private boolean _noTimeMatch;
-	/* do not use CRC-32 checksum for file-matching */
-	private boolean _noCrcMatch;
-	/* rename matched target files? */
-	private boolean _renameTarget;
-	/* overwrite existing target files? */
-	private boolean _overwriteTarget;
-	/* use std logging */
-	private boolean _stdLog;
-	private String _logFile;
+	private boolean _noTimeMatch = true;
 	/* time-tolerance (in milliseconds) */
-	private long _timeTolerance;
-	private boolean _syncTimeOfTarget;
-	private boolean _deleteTarget;
-	private boolean _filterRelativePathname;
-	private boolean _filterLowerCase;
-	private boolean _regexFilterEnabled;
+	private final long _timeTolerance = 0L;
+	/* do not use CRC-32 checksum for file-matching */
+	private boolean _noCrcMatch = true;
+	/* rename matched target files? */
+	private boolean _renameTarget = false;
+	/* overwrite existing target files? */
+	private boolean _overwriteTarget = true;
+	/* use std logging */
+	private final boolean _stdLog = true;
+	/* */
+	private String _logFile;
+	/* synchronize time of matched target files */
+	private final boolean _syncTimeOfTarget = true;
+	/* delete unmatched target files/directories */
+	private final boolean _deleteTarget = true;
+	/* */
+	private final boolean _filterRelativePathname = false;
+	/* */
+	private final boolean _filterLowerCase = false;
+	/* use REGEX instead of GLOB filename filters */
+	private final boolean _regexFilterEnabled = false;
+	/*
+	 * include source and target files/directories with names matching specified
+	 * GLOB/REGEX expression
+	 */
 	private String _include;
+	/*
+	 * exclude source and target files/directories with names matching specified
+	 * GLOB/REGEX expression
+	 */
 	private String _exclude;
+	/*
+	 * include source files/directories with names matching specified GLOB/REGEX
+	 * expression
+	 */
 	private String _includeSource;
+	/*
+	 * exclude source files/directories with names matching specified GLOB/REGEX
+	 * expression
+	 */
 	private String _excludeSource;
+	/*
+	 * include target files/directories with names matching specified GLOB/REGEX
+	 * expression
+	 */
 	private String _includeTarget;
+	/*
+	 * exclude target files/directories with names matching specified GLOB/REGEX
+	 * expression
+	 */
 	private String _excludeTarget;
 
 	/**
@@ -82,44 +113,96 @@ public class Job implements Serializable {
 		Sync.syncJob(this);
 	}
 
+	public void setName(String name) {
+		this._name = name;
+	}
+
 	public String getName() {
 		return _name;
 	}
 
-	public List<String> getSlaves() {
-		return this._slaves;
+	public void setMaster(String source) {
+		this._master = source;
 	}
 
 	public String getMaster() {
 		return this._master;
 	}
 
+	public void SetSlaves(List<String> slaves) {
+		this._slaves = slaves;
+	}
+
+	public List<String> getSlaves() {
+		return this._slaves;
+	}
+
+	public void addSlave(String slave) {
+		this._slaves.add(slave);
+	}
+
+	public void remSlave(String slave) {
+		this._slaves.remove(slave);
+	}
+
+	public void setSimulteOnly(boolean simulateOnly) {
+		this._simulateOnly = simulateOnly;
+	}
+
 	public boolean isSimulateOnly() {
 		return this._simulateOnly;
+	}
+
+	public void setIgnoreWarnings(boolean ignoreWarnings) {
+		this._ignoreWarnings = ignoreWarnings;
 	}
 
 	public boolean isIgnoreWarnings() {
 		return this._ignoreWarnings;
 	}
 
+	public void setNoRecurse(boolean noRecurse) {
+		this._noRecurse = noRecurse;
+	}
+
 	public boolean isNoRecurse() {
 		return this._noRecurse;
+	}
+
+	public void setNoNameMatch(boolean noNameMatch) {
+		this._noNameMatch = noNameMatch;
 	}
 
 	public boolean isNoNameMatch() {
 		return this._noNameMatch;
 	}
 
+	public void setNoTimeMatch(boolean noTimeMatch) {
+		this._noTimeMatch = noTimeMatch;
+	}
+
 	public boolean isNoTimeMatch() {
 		return this._noTimeMatch;
+	}
+
+	public void setNoCrcMatch(boolean noCrcMatch) {
+		this._noCrcMatch = noCrcMatch;
 	}
 
 	public boolean isNoCrcMatch() {
 		return this._noCrcMatch;
 	}
 
+	public void setRenameTarget(boolean renameTarget) {
+		this._renameTarget = renameTarget;
+	}
+
 	public boolean isRenameTarget() {
 		return this._renameTarget;
+	}
+
+	public void setOverwriteTarget(boolean overwriteTarget) {
+		this._overwriteTarget = overwriteTarget;
 	}
 
 	public boolean isOverwriteTarget() {
