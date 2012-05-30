@@ -277,6 +277,18 @@ public class Sync {
 
 	public static void syncJob(Job job) {
 
+		final Console console = System.console();
+
+		if (console == null) {
+			Sync.stdout = new PrintWriter(System.out);
+			Sync.stderr = new PrintWriter(System.err);
+		} else {
+			Sync.stdout = console.writer();
+			Sync.stderr = console.writer();
+		}
+
+		/* display program title */
+		SyncIO.printFlush("\n" + Sync.PROGRAM_TITLE);
 		processArguments(job);
 
 		/* process target directory/file */
