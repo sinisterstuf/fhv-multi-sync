@@ -69,32 +69,32 @@ public class Job implements Serializable {
 	 * include source and target files/directories with names matching specified
 	 * GLOB/REGEX expression
 	 */
-	private String _include;
+	private final String _include = "";
 	/*
 	 * exclude source and target files/directories with names matching specified
 	 * GLOB/REGEX expression
 	 */
-	private String _exclude;
+	private final String _exclude = "";
 	/*
 	 * include source files/directories with names matching specified GLOB/REGEX
 	 * expression
 	 */
-	private String _includeSource;
+	private final String _includeSource = "";
 	/*
 	 * exclude source files/directories with names matching specified GLOB/REGEX
 	 * expression
 	 */
-	private String _excludeSource;
+	private final String _excludeSource = "";
 	/*
 	 * include target files/directories with names matching specified GLOB/REGEX
 	 * expression
 	 */
-	private String _includeTarget;
+	private final String _includeTarget = "";
 	/*
 	 * exclude target files/directories with names matching specified GLOB/REGEX
 	 * expression
 	 */
-	private String _excludeTarget;
+	private final String _excludeTarget = "";
 
 	/**
 	 * Create a new Job
