@@ -1,9 +1,11 @@
 package at.fhv.multisync.ui.views;
 
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.part.ViewPart;
 
@@ -28,6 +30,18 @@ public class JobExplorer extends ViewPart {
 		scrolledComposite.setContent(_jobTree);
 		scrolledComposite.setMinSize(_jobTree.computeSize(SWT.DEFAULT,
 				SWT.DEFAULT));
+		
+		// This is new code
+		// First we create a menu Manager
+		//MenuManager menuManager = new MenuManager();
+		//Menu menu = menuManager.createContextMenu(viewer.getTable());
+		
+		// Set the MenuManager
+		//viewer.getTable().setMenu(menu);
+		//getSite().registerContextMenu(menuManager, viewer);
+		
+		// Make the selection available
+		//getSite().setSelectionProvider(viewer);
 	}
 
 	@Override
