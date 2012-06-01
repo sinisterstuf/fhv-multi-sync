@@ -16,6 +16,7 @@ public class JobExplorer extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		System.out.println("TEST");
 		parent.setLayout(new FillLayout(SWT.HORIZONTAL));
 
 		ScrolledComposite scrolledComposite =
