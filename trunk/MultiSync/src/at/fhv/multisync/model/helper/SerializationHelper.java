@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -47,8 +46,7 @@ public class SerializationHelper {
 	/**
 	 * Serialize an object to the default location
 	 * 
-	 * @param object
-	 *            The object to serialize
+	 * @param object The object to serialize
 	 */
 	public static void serialize(Serializable object) {
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
@@ -96,10 +94,10 @@ public class SerializationHelper {
 	 * @return A list of all serialized object in the folder.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> deserialize() {
+	public static <T> ArrayList<T> deserialize() {
 		FileInputStream fIn = null;
 		ObjectInputStream objIn = null;
-		List<T> out = new ArrayList<T>();
+		ArrayList<T> out = new ArrayList<T>();
 
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
 			try {
