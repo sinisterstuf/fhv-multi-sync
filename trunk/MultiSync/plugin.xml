@@ -96,14 +96,15 @@
          </menu>
       </menuContribution>
       <menuContribution
-            allPopups="false"
             locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="at.fhv.multisync.maintoolbar"
                label="Toolbar">
             <command
                   commandId="at.multisync.RunSync"
-                  icon="icons/panel.png"
+                  hoverIcon="icons/control_play_blue_16.png"
+                  icon="icons/control_play_16.png"
+                  label="Run sync"
                   style="push">
             </command>
          </toolbar>
@@ -173,6 +174,15 @@
       <initializer
             class="at.fhv.multisync.preferences.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="at.multisync.RunSync"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+6">
+      </key>
    </extension>
 
 </plugin>
