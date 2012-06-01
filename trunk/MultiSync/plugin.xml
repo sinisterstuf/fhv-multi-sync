@@ -67,6 +67,11 @@
                   label="Edit Job"
                   style="push">
             </command>
+            <command
+                  commandId="MultiSync.JobPreferences"
+                  label="Job Preferences"
+                  style="push">
+            </command>
          </menu>
          <menu
                label="View">
@@ -125,6 +130,11 @@
             description="Run sync program"
             id="at.multisync.RunSync"
             name="Run sync">
+      </command>
+      <command
+            defaultHandler="at.fhv.multisync.handlers.PreferenceHandler"
+            id="MultiSync.JobPreferences"
+            name="Show Job Preferences">
       </command>
    </extension>
    <extension
