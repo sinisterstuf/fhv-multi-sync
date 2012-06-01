@@ -1,6 +1,6 @@
 package at.fhv.multisync.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import at.fhv.multisync.model.helper.SerializationHelper;
 
@@ -12,13 +12,24 @@ import at.fhv.multisync.model.helper.SerializationHelper;
  */
 public class JobModel {
 	private static JobModel INSTANCE;
-	private final List<JobGroup> _groups;
+	private ArrayList<JobGroup> _groups;
+
+	{
+		// FIXME for testing only
+		JobGroup group = new JobGroup("MyGroup");
+		Job j1 = new Job("Job 1");
+		j1.addSlave("C:\\tmp");
+		j1.setMaster("C:\\master");
+		group.addJob(j1);
+		_groups = new ArrayList<JobGroup>();
+		_groups.add(group);
+	}
 
 	/**
 	 * Default constructor.
 	 */
 	private JobModel() {
-		_groups = SerializationHelper.deserialize();
+		// _groups = SerializationHelper.deserialize();
 	}
 
 	/**
@@ -37,7 +48,16 @@ public class JobModel {
 	/**
 	 * @return The groups
 	 */
-	public List<JobGroup> getGroups() {
+	public ArrayList<JobGroup> getGroups() {
 		return _groups;
+	}
+
+	/**
+	 * Save the jobs
+	 */
+	public void save() {
+		if (_groups != null) {
+			SerializationHelper.serialize(_groups);
+		}
 	}
 }

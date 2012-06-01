@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
-import at.fhv.multisync.model.provider.tree.JobMockModel;
+import at.fhv.multisync.model.JobModel;
 
 /**
  * This class controls all aspects of the application's execution
@@ -50,7 +50,7 @@ public class Application implements IApplication {
 			@Override
 			public void run() {
 				if (!display.isDisposed()) {
-					JobMockModel.saveJobs();
+					JobModel.getInstance().save();
 					workbench.close();
 				}
 			}
