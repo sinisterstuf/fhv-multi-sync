@@ -153,5 +153,19 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="at.fhv.multisync.preferences.JobPreferencePage"
+            id="at.fhv.multisync.preferences.JobPreferencePage"
+            name="Job Preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="at.fhv.multisync.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>
