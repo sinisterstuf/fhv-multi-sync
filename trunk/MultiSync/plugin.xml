@@ -22,12 +22,6 @@
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="at.fhv.multisync.ui.views.LogView"
-            id="MultiSync.view.LogView"
-            name="Log"
-            restorable="true">
-      </view>
-      <view
             class="at.fhv.multisync.ui.views.JobExplorer"
             id="MultiSync.view.JobExplorer"
             name="Job Explorer"
@@ -40,21 +34,18 @@
             targetID="*">
          <view
                closeable="true"
-               id="MultiSync.view.LogView"
-               minimized="false"
-               ratio="0.7"
-               relationship="bottom"
-               relative="org.eclipse.ui.editorss"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
                id="MultiSync.view.JobExplorer"
                minimized="false"
                ratio="0.3"
                relationship="left"
                relative="org.eclipse.ui.editorss"
                visible="true">
+         </view>
+         <view
+               id="org.eclipse.ui.console.ConsoleView"
+               minimized="false"
+               relationship="bottom"
+               relative="org.eclipse.ui.editorss">
          </view>
       </perspectiveExtension>
    </extension>
@@ -138,6 +129,29 @@
             id="at.multisync.job.edit"
             name="Edit job">
       </command>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="MultiSync.application"
+            name="MultiSync">
+         <property
+               name="appName"
+               value="MultiSync">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="at.fhv.multisync.Application"
+            name="MultiSync">
+         <property
+               name="appName"
+               value="MultiSync">
+         </property>
+      </product>
    </extension>
 
 </plugin>
