@@ -41,6 +41,7 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.PatternSyntaxException;
 
+import at.fhv.multisync.bl.io.TableOutputStream;
 import at.fhv.multisync.model.Job;
 
 /**
@@ -277,15 +278,18 @@ public class Sync {
 
 	public static void syncJob(Job job) {
 
-		final Console console = System.console();
+		// final Console console = System.console();
 
-		if (console == null) {
-			Sync.stdout = new PrintWriter(System.out);
-			Sync.stderr = new PrintWriter(System.err);
-		} else {
-			Sync.stdout = console.writer();
-			Sync.stderr = console.writer();
-		}
+		// if (console == null) {
+		// Sync.stdout = new PrintWriter(System.out);
+		// Sync.stderr = new PrintWriter(System.err);
+		// } else {
+		// Sync.stdout = console.writer();
+		// Sync.stderr = console.writer();
+		// }
+
+		Sync.stdout = new TableOutputStream(System.out);
+		Sync.stderr = new TableOutputStream(System.err);
 
 		/* display program title */
 		SyncIO.printFlush("\n" + Sync.PROGRAM_TITLE);
