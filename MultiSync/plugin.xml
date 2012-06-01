@@ -92,13 +92,13 @@
       </menuContribution>
       <menuContribution
             allPopups="false"
-            locationURI="toolbar.org.eclipse.ui.main.toolbar">
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
          <toolbar
                id="at.fhv.multisync.maintoolbar"
                label="Toolbar">
             <command
-                  commandId="at.multisync.openmsg"
-                  icon="icons/widescreen.png"
+                  commandId="at.multisync.RunSync"
+                  icon="icons/panel.png"
                   style="push">
             </command>
          </toolbar>
@@ -115,19 +115,16 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            description="Opens a view"
-            id="at.multisync.openview"
-            name="ShowView">
-      </command>
-      <command
-            description="shows a message"
-            id="at.multisync.openmsg"
-            name="msg">
-      </command>
-      <command
+            defaultHandler="at.fhv.multisync.handlers.handlerJobEdit"
             description="Edits a job"
             id="at.multisync.job.edit"
             name="Edit job">
+      </command>
+      <command
+            defaultHandler="at.fhv.multisync.handlers.HandlerRunSync"
+            description="Run sync program"
+            id="at.multisync.RunSync"
+            name="Run sync">
       </command>
    </extension>
    <extension
