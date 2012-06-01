@@ -280,15 +280,15 @@ public class Sync {
 		// Sync.stdout = new TableOutputStream(System.out);
 		// Sync.stderr = new TableOutputStream(System.err);
 
-		final Console console = System.console();
+		// final Console console = System.console();
 
-		if (console == null) {
-			Sync.stdout = new PrintWriter(System.out);
-			Sync.stderr = new PrintWriter(System.err);
-		} else {
-			Sync.stdout = console.writer();
-			Sync.stderr = console.writer();
-		}
+		// if (console == null) {
+		Sync.stdout = new PrintWriter(System.out);
+		Sync.stderr = new PrintWriter(System.err);
+		// } else {
+		// Sync.stdout = console.writer();
+		// Sync.stderr = console.writer();
+		// }
 
 		/* display program title */
 		SyncIO.printFlush("\n" + Sync.PROGRAM_TITLE);
