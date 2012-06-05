@@ -107,6 +107,11 @@
                   label="Run sync"
                   style="push">
             </command>
+            <command
+                  commandId="at.multisync.job.add"
+                  label="Add Job"
+                  style="push">
+            </command>
          </toolbar>
       </menuContribution>
       <menuContribution
@@ -130,24 +135,24 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="at.fhv.multisync.handlers.handlerJobEdit"
+            defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobEdit"
             description="Edits a job"
             id="at.multisync.job.edit"
             name="Edit job">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.handlers.HandlerRunSync"
+            defaultHandler="at.fhv.multisync.ui.handlers.HandlerRunSync"
             description="Run sync program"
             id="at.multisync.RunSync"
             name="Run sync">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.handlers.PreferenceHandler"
+            defaultHandler="at.fhv.multisync.ui.handlers.PreferenceHandler"
             id="MultiSync.JobPreferences"
             name="Show Job Preferences">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.handlers.HandlerJobAdd"
+            defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobAdd"
             description="Adds a new job."
             id="at.multisync.job.add"
             name="Add job">
@@ -179,7 +184,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="at.fhv.multisync.preferences.JobPreferencePage"
+            class="at.fhv.multisync.ui.preferences.JobPreferencePage"
             id="at.fhv.multisync.preferences.JobPreferencePage"
             name="Job Preferences">
       </page>
@@ -187,7 +192,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="at.fhv.multisync.preferences.PreferenceInitializer">
+            class="at.fhv.multisync.ui.preferences.PreferenceInitializer">
       </initializer>
    </extension>
    <extension

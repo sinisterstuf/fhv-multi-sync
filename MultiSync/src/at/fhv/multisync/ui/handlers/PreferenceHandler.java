@@ -1,4 +1,4 @@
-package at.fhv.multisync.handlers;
+package at.fhv.multisync.ui.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
