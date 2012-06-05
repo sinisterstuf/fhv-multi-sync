@@ -1,4 +1,4 @@
-package at.fhv.multisync.preferences;
+package at.fhv.multisync.ui.preferences;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;

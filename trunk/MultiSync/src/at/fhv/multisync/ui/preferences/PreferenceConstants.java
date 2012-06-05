@@ -1,4 +1,4 @@
-package at.fhv.multisync.preferences;
+package at.fhv.multisync.ui.preferences;
 
 public class PreferenceConstants {
 	
