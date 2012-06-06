@@ -272,39 +272,9 @@ public class Job implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (_deleteTarget ? 1231 : 1237);
-		result = prime * result
-				+ ((_exclude == null) ? 0 : _exclude.hashCode());
-		result = prime * result
-				+ ((_excludeSource == null) ? 0 : _excludeSource.hashCode());
-		result = prime * result
-				+ ((_excludeTarget == null) ? 0 : _excludeTarget.hashCode());
-		result = prime * result + (_filterLowerCase ? 1231 : 1237);
-		result = prime * result + (_filterRelativePathname ? 1231 : 1237);
-		result = prime * result + (_ignoreWarnings ? 1231 : 1237);
-		result = prime * result
-				+ ((_include == null) ? 0 : _include.hashCode());
-		result = prime * result
-				+ ((_includeSource == null) ? 0 : _includeSource.hashCode());
-		result = prime * result
-				+ ((_includeTarget == null) ? 0 : _includeTarget.hashCode());
-		result = prime * result
-				+ ((_logFile == null) ? 0 : _logFile.hashCode());
 		result = prime * result + ((_master == null) ? 0 : _master.hashCode());
 		result = prime * result + ((_name == null) ? 0 : _name.hashCode());
-		result = prime * result + (_noCrcMatch ? 1231 : 1237);
-		result = prime * result + (_noNameMatch ? 1231 : 1237);
-		result = prime * result + (_noRecurse ? 1231 : 1237);
-		result = prime * result + (_noTimeMatch ? 1231 : 1237);
-		result = prime * result + (_overwriteTarget ? 1231 : 1237);
-		result = prime * result + (_regexFilterEnabled ? 1231 : 1237);
-		result = prime * result + (_renameTarget ? 1231 : 1237);
-		result = prime * result + (_simulateOnly ? 1231 : 1237);
 		result = prime * result + ((_slaves == null) ? 0 : _slaves.hashCode());
-		result = prime * result + (_stdLog ? 1231 : 1237);
-		result = prime * result + (_syncTimeOfTarget ? 1231 : 1237);
-		result = prime * result
-				+ (int) (_timeTolerance ^ (_timeTolerance >>> 32));
 		return result;
 	}
 
@@ -320,49 +290,6 @@ public class Job implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Job other = (Job) obj;
-		if (_deleteTarget != other._deleteTarget)
-			return false;
-		if (_exclude == null) {
-			if (other._exclude != null)
-				return false;
-		} else if (!_exclude.equals(other._exclude))
-			return false;
-		if (_excludeSource == null) {
-			if (other._excludeSource != null)
-				return false;
-		} else if (!_excludeSource.equals(other._excludeSource))
-			return false;
-		if (_excludeTarget == null) {
-			if (other._excludeTarget != null)
-				return false;
-		} else if (!_excludeTarget.equals(other._excludeTarget))
-			return false;
-		if (_filterLowerCase != other._filterLowerCase)
-			return false;
-		if (_filterRelativePathname != other._filterRelativePathname)
-			return false;
-		if (_ignoreWarnings != other._ignoreWarnings)
-			return false;
-		if (_include == null) {
-			if (other._include != null)
-				return false;
-		} else if (!_include.equals(other._include))
-			return false;
-		if (_includeSource == null) {
-			if (other._includeSource != null)
-				return false;
-		} else if (!_includeSource.equals(other._includeSource))
-			return false;
-		if (_includeTarget == null) {
-			if (other._includeTarget != null)
-				return false;
-		} else if (!_includeTarget.equals(other._includeTarget))
-			return false;
-		if (_logFile == null) {
-			if (other._logFile != null)
-				return false;
-		} else if (!_logFile.equals(other._logFile))
-			return false;
 		if (_master == null) {
 			if (other._master != null)
 				return false;
@@ -373,33 +300,12 @@ public class Job implements Serializable {
 				return false;
 		} else if (!_name.equals(other._name))
 			return false;
-		if (_noCrcMatch != other._noCrcMatch)
-			return false;
-		if (_noNameMatch != other._noNameMatch)
-			return false;
-		if (_noRecurse != other._noRecurse)
-			return false;
-		if (_noTimeMatch != other._noTimeMatch)
-			return false;
-		if (_overwriteTarget != other._overwriteTarget)
-			return false;
-		if (_regexFilterEnabled != other._regexFilterEnabled)
-			return false;
-		if (_renameTarget != other._renameTarget)
-			return false;
-		if (_simulateOnly != other._simulateOnly)
-			return false;
 		if (_slaves == null) {
 			if (other._slaves != null)
 				return false;
 		} else if (!_slaves.equals(other._slaves))
 			return false;
-		if (_stdLog != other._stdLog)
-			return false;
-		if (_syncTimeOfTarget != other._syncTimeOfTarget)
-			return false;
-		if (_timeTolerance != other._timeTolerance)
-			return false;
 		return true;
 	}
+
 }

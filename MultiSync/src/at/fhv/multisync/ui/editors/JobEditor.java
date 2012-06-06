@@ -50,6 +50,9 @@ public class JobEditor extends EditorPart {
 		// set the input for the editor
 		setInput(input);
 		_job = ((JobEditorInput) input).getJob();
+
+		// set the title
+		setPartName(_job.getName());
 	}
 
 	@Override
@@ -88,8 +91,6 @@ public class JobEditor extends EditorPart {
 				false, 1, 1);
 		gd__slaveDirTab.heightHint = 292;
 		_slaveDirTab.setLayoutData(gd__slaveDirTab);
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

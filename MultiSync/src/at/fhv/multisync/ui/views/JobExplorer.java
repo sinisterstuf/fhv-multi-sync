@@ -59,7 +59,7 @@ public class JobExplorer extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// nothing
+		_jobTree.getControl().setFocus();
 	}
 
 	/**
