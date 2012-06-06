@@ -12,10 +12,18 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
+import at.fhv.multisync.model.Job;
+
 public class JobEditor extends EditorPart {
 	public static final String ID = "MultiSync.editor.JobEditor";
+	private Job _job;
+	private boolean _dirty;
 
+	/**
+	 * Default constructor.
+	 */
 	public JobEditor() {
+		_dirty = false;
 	}
 
 	@Override
@@ -26,8 +34,7 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
-
+		// nothing
 	}
 
 	@Override
@@ -42,18 +49,28 @@ public class JobEditor extends EditorPart {
 
 		// set the input for the editor
 		setInput(input);
+		_job = ((JobEditorInput) input).getJob();
 	}
 
 	@Override
 	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return false;
+		return _dirty;
 	}
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/**
+	 * Change the dirty state and fire event.
+	 * 
+	 * @param dirty
+	 *            The new dirty state
+	 */
+	private void setDirty(boolean dirty) {
+		firePropertyChange(PROP_DIRTY);
+		_dirty = dirty;
 	}
 
 	@Override
@@ -77,7 +94,6 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		// nothing
 	}
 }
