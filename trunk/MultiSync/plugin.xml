@@ -109,11 +109,13 @@
             </command>
             <command
                   commandId="at.multisync.job.add"
+                  icon="icons/plus-circle.png"
                   label="Add Job"
                   style="push">
             </command>
             <command
                   commandId="at.multisync.jobgroup.add"
+                  icon="icons/folder-plus.png"
                   label="Add group"
                   style="push">
             </command>
@@ -214,6 +216,15 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+6">
       </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="at.fhv.multisync.ui.editors.JobEditor"
+            default="false"
+            id="MultiSync.editor.JobEditor"
+            name="JobEditor">
+      </editor>
    </extension>
 
 </plugin>
