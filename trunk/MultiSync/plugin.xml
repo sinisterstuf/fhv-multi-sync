@@ -112,6 +112,11 @@
                   label="Add Job"
                   style="push">
             </command>
+            <command
+                  commandId="at.multisync.jobgroup.add"
+                  label="Add group"
+                  style="push">
+            </command>
          </toolbar>
       </menuContribution>
       <menuContribution
@@ -156,6 +161,12 @@
             description="Adds a new job."
             id="at.multisync.job.add"
             name="Add job">
+      </command>
+      <command
+            defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobGroupAdd"
+            description="Adds a new job group."
+            id="at.multisync.jobgroup.add"
+            name="Add group">
       </command>
    </extension>
    <extension

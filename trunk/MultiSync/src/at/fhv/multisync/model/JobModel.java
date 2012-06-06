@@ -15,13 +15,14 @@ public class JobModel {
 	private ArrayList<JobGroup> _groups;
 
 	{
+		_groups = new ArrayList<JobGroup>();
+
 		// FIXME for testing only
 		JobGroup group = new JobGroup("MyGroup");
 		Job j1 = new Job("Job 1");
 		j1.addSlave("C:\\tmp");
 		j1.setMaster("C:\\master");
 		group.addJob(j1);
-		_groups = new ArrayList<JobGroup>();
 		_groups.add(group);
 	}
 
@@ -59,5 +60,15 @@ public class JobModel {
 		if (_groups != null) {
 			SerializationHelper.serialize(_groups);
 		}
+	}
+
+	/**
+	 * Add a group.
+	 * 
+	 * @param group
+	 *            The group to add.
+	 */
+	public void addGroup(JobGroup group) {
+		_groups.add(group);
 	}
 }
