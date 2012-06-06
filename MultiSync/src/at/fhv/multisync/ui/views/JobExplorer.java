@@ -11,10 +11,14 @@ import at.fhv.multisync.model.provider.tree.JobContentProvider;
 import at.fhv.multisync.model.provider.tree.JobLabelProvider;
 
 public class JobExplorer extends ViewPart {
-	private TreeViewer _jobTree;
+	private static TreeViewer _jobTree;
 	public static final String ID = "MultiSync.view.JobExplorer";
 
+	/**
+	 * Default constructor.
+	 */
 	public JobExplorer() {
+		// nothing
 	}
 
 	@Override
@@ -25,10 +29,20 @@ public class JobExplorer extends ViewPart {
 		_jobTree.setContentProvider(new JobContentProvider());
 		_jobTree.setLabelProvider(new JobLabelProvider());
 		_jobTree.setInput(JobModel.getInstance());
+		getSite().setSelectionProvider(_jobTree);
 	}
 
 	@Override
 	public void setFocus() {
 		// nothing
+	}
+
+	/**
+	 * Refresh the tree
+	 */
+	public static void refreshTree() {
+		if (_jobTree != null) {
+			_jobTree.refresh();
+		}
 	}
 }
