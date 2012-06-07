@@ -9,10 +9,18 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
@@ -30,6 +38,7 @@ public class JobEditor extends EditorPart {
 	private Job _job;
 	private boolean _dirty;
 	private TreeViewer _masterDirTree;
+	private CTabFolder _slaveDirTabFolder;
 
 	/**
 	 * Default constructor.
@@ -47,7 +56,11 @@ public class JobEditor extends EditorPart {
 		_job.setMaster(selectedMasterFile.getAbsolutePath());
 
 		// save the slaves
-		// TODO implement
+		for (CTabItem tab : _slaveDirTabFolder.getItems()) {
+			System.out.println(tab);
+			// TODO implement
+		}
+
 		setDirty(false);
 	}
 
@@ -97,7 +110,20 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout(2, true));
+		parent.setLayout(new GridLayout(3, true));
+
+		Label lblMaster = new Label(parent, SWT.NONE);
+		lblMaster.setText("Master");
+
+		Label lblSlaves = new Label(parent, SWT.NONE);
+		lblSlaves.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
+				1, 1));
+		lblSlaves.setText("Slaves");
+
+		Button btnAddSlave = new Button(parent, SWT.NONE);
+		btnAddSlave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
+				false, 1, 1));
+		btnAddSlave.setText("Add slave");
 
 		_masterDirTree = new TreeViewer(parent, SWT.BORDER);
 		Tree tree = _masterDirTree.getTree();
@@ -126,11 +152,27 @@ public class JobEditor extends EditorPart {
 
 		getSite().setSelectionProvider(_masterDirTree);
 
-		TabFolder slaveDirTab = new TabFolder(parent, SWT.NONE);
-		GridData gdSlaveDirTab = new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1);
-		gdSlaveDirTab.heightHint = 320;
-		slaveDirTab.setLayoutData(gdSlaveDirTab);
+		_slaveDirTabFolder = new CTabFolder(parent, SWT.BORDER);
+		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				false, 2, 1));
+		_slaveDirTabFolder.setSelectionBackground(Display.getCurrent()
+				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+		_slaveDirTabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			@Override
+			public void close(CTabFolderEvent event) {
+				setDirty(true);
+			}
+		});
+
+		btnAddSlave.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				CTabItem item = new CTabItem(_slaveDirTabFolder, SWT.NONE);
+				item.setText("Slave");
+				item.setShowClose(true);
+				setDirty(true);
+			}
+		});
 	}
 
 	/**
