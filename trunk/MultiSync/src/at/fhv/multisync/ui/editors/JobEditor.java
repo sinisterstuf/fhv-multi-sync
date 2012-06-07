@@ -152,12 +152,8 @@ public class JobEditor extends EditorPart {
 		btnAddSlave.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				CTabItem item = new CTabItem(_slaveDirTabFolder, SWT.NONE);
-				item.setText("Slave");
-				item.setShowClose(true);
-				initializeTab(item);
+				initializeTab(_slaveDirTabFolder);
 				setDirty(true);
-				_slaveDirTabFolder.setFocus();
 			}
 		});
 
@@ -199,6 +195,26 @@ public class JobEditor extends EditorPart {
 				setDirty(true);
 			}
 		});
+
+		loadSlaves(_slaveDirTabFolder);
+	}
+
+	/**
+	 * Load all slaves in the job to the given tab folder
+	 * 
+	 * @param folder
+	 *            The tab folder to load the slaves in
+	 */
+	private void loadSlaves(CTabFolder folder) {
+		for (String s : _job.getSlaves()) {
+			TreeViewer item = initializeTab(folder);
+
+			File slave = new File(s);
+			StructuredSelection sel = new StructuredSelection(slave);
+			item.setSelection(sel, true);
+		}
+
+		// TODO slave tab folder should get focus!!!
 	}
 
 	/**
@@ -232,12 +248,17 @@ public class JobEditor extends EditorPart {
 	}
 
 	/**
-	 * Initialize a new tab
+	 * Initialize the slave tab folder
 	 * 
-	 * @param item
-	 *            The tab to initialize
+	 * @param folder
+	 *            The tab folder to initialize
+	 * @return The created treeviewer in the tab
 	 */
-	private void initializeTab(CTabItem item) {
+	private TreeViewer initializeTab(CTabFolder folder) {
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		item.setText("Slave");
+		item.setShowClose(true);
+
 		// create the tree
 		TreeViewer treeViewer = new TreeViewer(item.getParent(), SWT.NONE);
 		item.setControl(treeViewer.getControl());
@@ -250,7 +271,9 @@ public class JobEditor extends EditorPart {
 
 		// show the files
 		showFileSystem(treeViewer, provider);
+		folder.setFocus();
 
+		return treeViewer;
 	}
 
 	@Override
