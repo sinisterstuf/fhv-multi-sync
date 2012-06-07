@@ -34,7 +34,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
 import at.fhv.multisync.bl.file.FileSystemProvider;
-import at.fhv.multisync.bl.file.impl.LocalFileSystemProvider;
 import at.fhv.multisync.bl.helper.PluginHelper;
 import at.fhv.multisync.model.Job;
 import at.fhv.multisync.model.provider.file.FileContentProvider;
@@ -153,7 +152,13 @@ public class JobEditor extends EditorPart {
 		btnAddSlave.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseUp(MouseEvent e) {
-				initializeTab(_slaveDirTabFolder);
+				// get the file system provider
+				StructuredSelection selected = (StructuredSelection) _slaveCombo
+						.getSelection();
+				FileSystemProvider provider = (FileSystemProvider) selected
+						.getFirstElement();
+
+				initializeTab(_slaveDirTabFolder, provider);
 				setDirty(true);
 			}
 		});
@@ -165,7 +170,8 @@ public class JobEditor extends EditorPart {
 		tree.setLayoutData(gd_tree);
 
 		// load data
-		showFileSystem(_masterDirTree, new LocalFileSystemProvider());
+		showFileSystem(_masterDirTree,
+				PluginHelper.getSuitableProvider(_job.getMaster()));
 
 		// set as selected
 		if (_masterDirTree != null && !_job.getMaster().isEmpty()) {
@@ -208,7 +214,8 @@ public class JobEditor extends EditorPart {
 	 */
 	private void loadSlaves(CTabFolder folder) {
 		for (String s : _job.getSlaves()) {
-			TreeViewer item = initializeTab(folder);
+			TreeViewer item = initializeTab(folder,
+					PluginHelper.getSuitableProvider(s));
 
 			File slave = new File(s);
 			StructuredSelection sel = new StructuredSelection(slave);
@@ -241,9 +248,11 @@ public class JobEditor extends EditorPart {
 	 *            The provider of the file system
 	 */
 	private void showFileSystem(TreeViewer tree, FileSystemProvider provider) {
-		tree.setContentProvider(new FileContentProvider());
-		tree.setLabelProvider(new FileLabelProvider());
-		tree.setInput(provider.getRoot());
+		if (provider != null) {
+			tree.setContentProvider(new FileContentProvider());
+			tree.setLabelProvider(new FileLabelProvider());
+			tree.setInput(provider.getRoot());
+		}
 	}
 
 	/**
@@ -253,7 +262,8 @@ public class JobEditor extends EditorPart {
 	 *            The tab folder to initialize
 	 * @return The created treeviewer in the tab
 	 */
-	private TreeViewer initializeTab(CTabFolder folder) {
+	private TreeViewer initializeTab(CTabFolder folder,
+			FileSystemProvider provider) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText("Slave");
 		item.setShowClose(true);
@@ -261,12 +271,6 @@ public class JobEditor extends EditorPart {
 		// create the tree
 		TreeViewer treeViewer = new TreeViewer(item.getParent(), SWT.NONE);
 		item.setControl(treeViewer.getControl());
-
-		// get the file system provider
-		StructuredSelection selected = (StructuredSelection) _slaveCombo
-				.getSelection();
-		FileSystemProvider provider = (FileSystemProvider) selected
-				.getFirstElement();
 
 		if (provider != null) {
 			// show the files
