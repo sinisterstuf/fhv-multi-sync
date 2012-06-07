@@ -213,8 +213,6 @@ public class JobEditor extends EditorPart {
 			StructuredSelection sel = new StructuredSelection(slave);
 			item.setSelection(sel, true);
 		}
-
-		// TODO slave tab folder should get focus!!!
 	}
 
 	/**
@@ -278,6 +276,6 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void setFocus() {
-		// nothing
+		_slaveDirTabFolder.setFocus();
 	}
 }

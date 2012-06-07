@@ -56,6 +56,7 @@ public class FileContentProvider implements ITreeContentProvider {
 
 		@Override
 		public boolean accept(File pathname) {
+			// TODO show only folders???
 			return !pathname.isHidden();
 		}
 
