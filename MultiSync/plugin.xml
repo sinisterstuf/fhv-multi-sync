@@ -102,8 +102,7 @@
                label="Toolbar">
             <command
                   commandId="at.multisync.RunSync"
-                  hoverIcon="icons/control_play_blue_16.png"
-                  icon="icons/control_play_16.png"
+                  icon="icons/control_play_blue_16.png"
                   label="Run sync"
                   style="push">
             </command>
@@ -117,6 +116,12 @@
                   commandId="at.multisync.jobgroup.add"
                   icon="icons/folder-plus.png"
                   label="Add group"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.multisync.job.remove"
+                  icon="icons/minus-circle.png"
+                  label="Remove"
                   style="push">
             </command>
          </toolbar>
@@ -169,6 +174,12 @@
             description="Adds a new job group."
             id="at.multisync.jobgroup.add"
             name="Add group">
+      </command>
+      <command
+            defaultHandler="at.fhv.multisync.ui.handlers.HandlerRemoveJob"
+            description="Removes a job or job group"
+            id="at.multisync.job.remove"
+            name="Remove job/group">
       </command>
    </extension>
    <extension

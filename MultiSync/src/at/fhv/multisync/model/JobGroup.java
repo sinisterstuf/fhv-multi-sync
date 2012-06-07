@@ -21,7 +21,8 @@ public class JobGroup implements Serializable {
 	/**
 	 * Default constructor.
 	 * 
-	 * @param name The group name
+	 * @param name
+	 *            The group name
 	 */
 	public JobGroup(String name) {
 		_name = name;
@@ -38,10 +39,12 @@ public class JobGroup implements Serializable {
 	/**
 	 * Add a job to the group.
 	 * 
-	 * @param job The job to add
+	 * @param job
+	 *            The job to add
 	 */
 	public void addJob(Job job) {
 		if (!_jobs.contains(job)) {
+			job.setParent(this);
 			_jobs.add(job);
 		}
 	}
@@ -49,7 +52,8 @@ public class JobGroup implements Serializable {
 	/**
 	 * Remove a job from the group.
 	 * 
-	 * @param job The job to remove
+	 * @param job
+	 *            The job to remove
 	 */
 	public void removeJob(Job job) {
 		if (_jobs.contains(job)) {
@@ -78,7 +82,8 @@ public class JobGroup implements Serializable {
 	/**
 	 * Set the group name
 	 * 
-	 * @param name The name of the group
+	 * @param name
+	 *            The name of the group
 	 */
 	public void setName(String name) {
 		_name = name;
