@@ -1,4 +1,4 @@
-package at.fhv.multisync.bl.file;
+package at.fhv.multisync.extension;
 
 import java.io.File;
 

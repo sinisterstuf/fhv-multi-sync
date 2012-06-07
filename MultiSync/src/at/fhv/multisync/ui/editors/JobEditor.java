@@ -33,8 +33,8 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-import at.fhv.multisync.bl.file.FileSystemProvider;
 import at.fhv.multisync.bl.helper.PluginHelper;
+import at.fhv.multisync.extension.FileSystemProvider;
 import at.fhv.multisync.model.Job;
 import at.fhv.multisync.model.provider.file.FileContentProvider;
 import at.fhv.multisync.model.provider.file.FileLabelProvider;

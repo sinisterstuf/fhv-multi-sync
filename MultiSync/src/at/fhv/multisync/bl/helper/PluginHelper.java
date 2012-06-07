@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 
-import at.fhv.multisync.bl.file.FileSystemProvider;
+import at.fhv.multisync.extension.FileSystemProvider;
 
 /**
  * 
