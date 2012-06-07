@@ -11,10 +11,15 @@ import at.fhv.multisync.bl.file.FileSystemProvider;
  * @author Michael Sieber
  */
 public class LocalFileSystemProvider implements FileSystemProvider {
+	private final String _name = "Local File System";
 
 	@Override
 	public File[] getRoot() {
 		return File.listRoots();
 	}
 
+	@Override
+	public String toString() {
+		return _name;
+	}
 }
