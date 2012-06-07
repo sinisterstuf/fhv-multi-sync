@@ -12,6 +12,7 @@ import at.fhv.multisync.bl.file.FileSystemProvider;
  */
 public class LocalFileSystemProvider implements FileSystemProvider {
 	private final String _name = "Local File System";
+	private final String _matchingProtocol = "^[a-zA-Z]://$";
 
 	@Override
 	public File[] getRoot() {
@@ -21,5 +22,14 @@ public class LocalFileSystemProvider implements FileSystemProvider {
 	@Override
 	public String toString() {
 		return _name;
+	}
+
+	@Override
+	public boolean canHandle(String protocol) {
+		if (protocol == null || protocol.isEmpty()) {
+			return false;
+		}
+
+		return protocol.matches(_matchingProtocol);
 	}
 }
