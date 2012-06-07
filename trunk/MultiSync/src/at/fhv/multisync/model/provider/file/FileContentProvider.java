@@ -33,7 +33,7 @@ public class FileContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		File tmp = (File) parentElement;
-		return tmp.listFiles(new HiddenFileFilter());
+		return tmp.listFiles(new DirectoryFileFilter());
 	}
 
 	@Override
@@ -48,16 +48,16 @@ public class FileContentProvider implements ITreeContentProvider {
 
 	/**
 	 * 
-	 * FileFilter for hidden files
+	 * FileFilter for showing only directories which are not hidden
 	 * 
 	 * @author Michael Sieber
 	 */
-	private class HiddenFileFilter implements FileFilter {
+	private class DirectoryFileFilter implements FileFilter {
 
 		@Override
 		public boolean accept(File pathname) {
-			// TODO show only folders???
-			return !pathname.isHidden();
+			// only show directories which are not hidden
+			return !pathname.isHidden() && pathname.isDirectory();
 		}
 
 	}
