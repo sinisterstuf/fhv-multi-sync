@@ -16,4 +16,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .,
  swing2swt.jar,
  swt-grouplayout.jar
-Export-Package: at.fhv.multisync.bl.file
+Export-Package: at.fhv.multisync.extension

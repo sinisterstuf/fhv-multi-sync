@@ -244,5 +244,11 @@
             name="JobEditor">
       </editor>
    </extension>
+   <extension
+         point="at.fhv.multisync.FileSystemProvider">
+      <FileSystemProvider
+            class="at.fhv.multisync.extension.impl.LocalFileSystemProvider">
+      </FileSystemProvider>
+   </extension>
 
 </plugin>
