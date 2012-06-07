@@ -124,6 +124,12 @@
                   label="Remove"
                   style="push">
             </command>
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  icon="icons/disk.png"
+                  label="Save"
+                  style="push">
+            </command>
          </toolbar>
       </menuContribution>
       <menuContribution

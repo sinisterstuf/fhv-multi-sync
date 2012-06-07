@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -39,8 +40,15 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		// TODO Auto-generated method stub
+		// save the master directory
+		TreeSelection masterSelection = (TreeSelection) _masterDirTree
+				.getSelection();
+		File selectedMasterFile = (File) masterSelection.getFirstElement();
+		_job.setMaster(selectedMasterFile.getAbsolutePath());
 
+		// save the slaves
+		// TODO implement
+		setDirty(false);
 	}
 
 	@Override
@@ -83,8 +91,8 @@ public class JobEditor extends EditorPart {
 	 *            The new dirty state
 	 */
 	private void setDirty(boolean dirty) {
-		firePropertyChange(PROP_DIRTY);
 		_dirty = dirty;
+		firePropertyChange(PROP_DIRTY);
 	}
 
 	@Override
