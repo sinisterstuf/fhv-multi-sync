@@ -9,6 +9,7 @@ import java.io.File;
  * @author Michael Sieber
  */
 public interface FileSystemProvider {
+	public static final String ID = "at.fhv.multisync.FileSystemProvider";
 
 	/**
 	 * Get all root folder of the file system

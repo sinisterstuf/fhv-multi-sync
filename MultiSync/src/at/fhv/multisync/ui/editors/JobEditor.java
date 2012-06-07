@@ -35,6 +35,7 @@ import org.eclipse.ui.part.EditorPart;
 
 import at.fhv.multisync.bl.file.FileSystemProvider;
 import at.fhv.multisync.bl.file.impl.LocalFileSystemProvider;
+import at.fhv.multisync.bl.helper.PluginHelper;
 import at.fhv.multisync.model.Job;
 import at.fhv.multisync.model.provider.file.FileContentProvider;
 import at.fhv.multisync.model.provider.file.FileLabelProvider;
@@ -223,7 +224,8 @@ public class JobEditor extends EditorPart {
 	 */
 	private void addFileSystemProvider(ComboViewer combo) {
 		// create the input list
-		FileSystemProvider[] provider = { new LocalFileSystemProvider() };
+		// FileSystemProvider[] provider = { new LocalFileSystemProvider() };
+		FileSystemProvider[] provider = PluginHelper.getFileSystemProviders();
 
 		combo.setContentProvider(new ArrayContentProvider());
 		combo.setLabelProvider(new LabelProvider());
@@ -267,9 +269,11 @@ public class JobEditor extends EditorPart {
 		FileSystemProvider provider = (FileSystemProvider) selected
 				.getFirstElement();
 
-		// show the files
-		showFileSystem(treeViewer, provider);
-		folder.setFocus();
+		if (provider != null) {
+			// show the files
+			showFileSystem(treeViewer, provider);
+			folder.setFocus();
+		}
 
 		return treeViewer;
 	}
