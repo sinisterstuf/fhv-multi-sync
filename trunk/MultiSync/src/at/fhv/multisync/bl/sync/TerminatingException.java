@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package at.fhv.multisync.bl;
+package at.fhv.multisync.bl.sync;
 
 /**
  * Represent a runtime exception that terminates the program. This exception

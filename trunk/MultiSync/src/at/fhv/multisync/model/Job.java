@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.fhv.multisync.bl.Sync;
+import at.fhv.multisync.bl.sync.Sync;
 
 /**
  * 

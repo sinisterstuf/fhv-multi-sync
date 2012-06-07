@@ -1,6 +1,12 @@
 package at.fhv.multisync.ui.editors;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -12,12 +18,17 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
+import at.fhv.multisync.bl.file.FileSystemProvider;
+import at.fhv.multisync.bl.file.impl.LocalFileSystemProvider;
 import at.fhv.multisync.model.Job;
+import at.fhv.multisync.model.provider.file.FileContentProvider;
+import at.fhv.multisync.model.provider.file.FileLabelProvider;
 
 public class JobEditor extends EditorPart {
 	public static final String ID = "MultiSync.editor.JobEditor";
 	private Job _job;
 	private boolean _dirty;
+	private TreeViewer _masterDirTree;
 
 	/**
 	 * Default constructor.
@@ -80,17 +91,52 @@ public class JobEditor extends EditorPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new GridLayout(2, true));
 
-		Tree _masterDirTree = new Tree(parent, SWT.BORDER);
-		GridData gd__masterDirTree = new GridData(SWT.FILL, SWT.FILL, true,
-				true, 1, 1);
-		gd__masterDirTree.widthHint = 274;
-		_masterDirTree.setLayoutData(gd__masterDirTree);
+		_masterDirTree = new TreeViewer(parent, SWT.BORDER);
+		Tree tree = _masterDirTree.getTree();
+		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
+		gd_tree.widthHint = 118;
+		tree.setLayoutData(gd_tree);
 
-		TabFolder _slaveDirTab = new TabFolder(parent, SWT.NONE);
-		GridData gd__slaveDirTab = new GridData(SWT.FILL, SWT.FILL, false,
-				false, 1, 1);
-		gd__slaveDirTab.heightHint = 292;
-		_slaveDirTab.setLayoutData(gd__slaveDirTab);
+		// load data
+		showFileSystem(_masterDirTree, new LocalFileSystemProvider());
+
+		// set as selected
+		if (_masterDirTree != null && !_job.getMaster().isEmpty()) {
+			File master = new File(_job.getMaster());
+			StructuredSelection sel = new StructuredSelection(master);
+			_masterDirTree.setSelection(sel, true);
+		}
+
+		_masterDirTree
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+
+					@Override
+					public void selectionChanged(SelectionChangedEvent event) {
+						setDirty(true);
+					}
+				});
+
+		getSite().setSelectionProvider(_masterDirTree);
+
+		TabFolder slaveDirTab = new TabFolder(parent, SWT.NONE);
+		GridData gdSlaveDirTab = new GridData(SWT.FILL, SWT.FILL, true, true,
+				1, 1);
+		gdSlaveDirTab.heightHint = 320;
+		slaveDirTab.setLayoutData(gdSlaveDirTab);
+	}
+
+	/**
+	 * Show the file system in the given tree
+	 * 
+	 * @param tree
+	 *            The tree in which the files should be shown
+	 * @param provider
+	 *            The provider of the file system
+	 */
+	private void showFileSystem(TreeViewer tree, FileSystemProvider provider) {
+		tree.setContentProvider(new FileContentProvider());
+		tree.setLabelProvider(new FileLabelProvider());
+		tree.setInput(provider.getRoot());
 	}
 
 	@Override
