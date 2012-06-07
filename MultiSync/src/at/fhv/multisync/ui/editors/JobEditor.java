@@ -224,7 +224,6 @@ public class JobEditor extends EditorPart {
 	 */
 	private void addFileSystemProvider(ComboViewer combo) {
 		// create the input list
-		// FileSystemProvider[] provider = { new LocalFileSystemProvider() };
 		FileSystemProvider[] provider = PluginHelper.getFileSystemProviders();
 
 		combo.setContentProvider(new ArrayContentProvider());
