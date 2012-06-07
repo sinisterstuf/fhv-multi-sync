@@ -1,9 +1,14 @@
 package at.fhv.multisync.ui.editors;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -22,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -39,6 +45,7 @@ public class JobEditor extends EditorPart {
 	private boolean _dirty;
 	private TreeViewer _masterDirTree;
 	private CTabFolder _slaveDirTabFolder;
+	private ComboViewer _slaveCombo;
 
 	/**
 	 * Default constructor.
@@ -56,10 +63,17 @@ public class JobEditor extends EditorPart {
 		_job.setMaster(selectedMasterFile.getAbsolutePath());
 
 		// save the slaves
+		List<String> slaves = new ArrayList<String>();
 		for (CTabItem tab : _slaveDirTabFolder.getItems()) {
-			System.out.println(tab);
-			// TODO implement
+			Tree t = (Tree) tab.getControl();
+
+			if (t.getSelectionCount() > 0) {
+				TreeItem item = t.getSelection()[0];
+				File file = (File) item.getData();
+				slaves.add(file.getAbsolutePath());
+			}
 		}
+		_job.SetSlaves(slaves);
 
 		setDirty(false);
 	}
@@ -120,10 +134,32 @@ public class JobEditor extends EditorPart {
 				1, 1));
 		lblSlaves.setText("Slaves");
 
-		Button btnAddSlave = new Button(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
+				1, 1));
+		composite.setLayout(new GridLayout(2, false));
+
+		_slaveCombo = new ComboViewer(composite, SWT.NONE);
+		_slaveCombo.getControl().setLayoutData(
+				new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		addFileSystemProvider(_slaveCombo);
+
+		Button btnAddSlave = new Button(composite, SWT.CENTER);
 		btnAddSlave.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
 				false, 1, 1));
 		btnAddSlave.setText("Add slave");
+
+		btnAddSlave.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				CTabItem item = new CTabItem(_slaveDirTabFolder, SWT.NONE);
+				item.setText("Slave");
+				item.setShowClose(true);
+				initializeTab(item);
+				setDirty(true);
+				_slaveDirTabFolder.setFocus();
+			}
+		});
 
 		_masterDirTree = new TreeViewer(parent, SWT.BORDER);
 		Tree tree = _masterDirTree.getTree();
@@ -163,16 +199,22 @@ public class JobEditor extends EditorPart {
 				setDirty(true);
 			}
 		});
+	}
 
-		btnAddSlave.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				CTabItem item = new CTabItem(_slaveDirTabFolder, SWT.NONE);
-				item.setText("Slave");
-				item.setShowClose(true);
-				setDirty(true);
-			}
-		});
+	/**
+	 * Add all available file system provider to a combobox
+	 * 
+	 * @param combo
+	 *            The combobox to which all the providers will be added
+	 */
+	private void addFileSystemProvider(ComboViewer combo) {
+		// create the input list
+		FileSystemProvider[] provider = { new LocalFileSystemProvider() };
+
+		combo.setContentProvider(new ArrayContentProvider());
+		combo.setLabelProvider(new LabelProvider());
+		combo.setInput(provider);
+		combo.getCombo().select(0);
 	}
 
 	/**
@@ -187,6 +229,28 @@ public class JobEditor extends EditorPart {
 		tree.setContentProvider(new FileContentProvider());
 		tree.setLabelProvider(new FileLabelProvider());
 		tree.setInput(provider.getRoot());
+	}
+
+	/**
+	 * Initialize a new tab
+	 * 
+	 * @param item
+	 *            The tab to initialize
+	 */
+	private void initializeTab(CTabItem item) {
+		// create the tree
+		TreeViewer treeViewer = new TreeViewer(item.getParent(), SWT.NONE);
+		item.setControl(treeViewer.getControl());
+
+		// get the file system provider
+		StructuredSelection selected = (StructuredSelection) _slaveCombo
+				.getSelection();
+		FileSystemProvider provider = (FileSystemProvider) selected
+				.getFirstElement();
+
+		// show the files
+		showFileSystem(treeViewer, provider);
+
 	}
 
 	@Override
