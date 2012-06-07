@@ -1,6 +1,7 @@
 package at.fhv.multisync.model.provider.file;
 
 import java.io.File;
+import java.io.FileFilter;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -12,17 +13,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @author Michael Sieber
  */
 public class FileContentProvider implements ITreeContentProvider {
-	private File _directory;
-
-	/**
-	 * Create a new FileContentProvider
-	 * 
-	 * @param directory
-	 *            The root directory of the content
-	 */
-	public FileContentProvider(File directory) {
-		_directory = directory;
-	}
+	private File[] _root;
 
 	@Override
 	public void dispose() {
@@ -31,27 +22,42 @@ public class FileContentProvider implements ITreeContentProvider {
 
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		_directory = (File) newInput;
+		_root = (File[]) newInput;
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		return _directory.listFiles();
+		return _root;
 	}
 
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		File tmp = (File) parentElement;
-		return tmp.listFiles();
+		return tmp.listFiles(new HiddenFileFilter());
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		return ((File) element).getParent();
+		return ((File) element).getParentFile();
 	}
 
 	@Override
 	public boolean hasChildren(Object element) {
 		return ((File) element).isDirectory();
+	}
+
+	/**
+	 * 
+	 * FileFilter for hidden files
+	 * 
+	 * @author Michael Sieber
+	 */
+	private class HiddenFileFilter implements FileFilter {
+
+		@Override
+		public boolean accept(File pathname) {
+			return !pathname.isHidden();
+		}
+
 	}
 }

@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package at.fhv.multisync.bl;
+package at.fhv.multisync.bl.sync;
 
 import java.io.File;
 import java.util.Date;

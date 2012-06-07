@@ -1,4 +1,4 @@
-package at.fhv.multisync.bl.test;
+package at.fhv.multisync.bl.sync.test;
 
 import at.fhv.multisync.model.Job;
 

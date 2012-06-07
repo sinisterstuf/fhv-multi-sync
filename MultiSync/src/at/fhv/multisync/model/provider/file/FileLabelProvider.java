@@ -21,7 +21,13 @@ public class FileLabelProvider extends LabelProvider {
 
 	@Override
 	public String getText(Object element) {
-		return ((File) element).getName();
+		File tmp = (File) element;
+
+		// check for drives
+		if (tmp.getName().equals("")) {
+			return tmp.getPath().replace("\\", "");
+		}
+		return tmp.getName();
 	}
 
 	@Override
