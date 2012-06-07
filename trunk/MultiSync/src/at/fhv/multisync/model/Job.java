@@ -25,6 +25,7 @@ public class Job implements Serializable {
 	private String _master;
 	/* process target directory/file */
 	private List<String> _slaves = new ArrayList<String>();
+	private JobGroup _parent;
 
 	/*
 	 * SYNC - PARAMETERS
@@ -143,6 +144,21 @@ public class Job implements Serializable {
 
 	public void remSlave(String slave) {
 		this._slaves.remove(slave);
+	}
+
+	/**
+	 * @return The parent
+	 */
+	public JobGroup getParent() {
+		return _parent;
+	}
+
+	/**
+	 * @param parent
+	 *            The parent to set
+	 */
+	public void setParent(JobGroup parent) {
+		_parent = parent;
 	}
 
 	public void setSimulteOnly(boolean simulateOnly) {

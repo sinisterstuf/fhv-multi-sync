@@ -71,4 +71,14 @@ public class JobModel {
 	public void addGroup(JobGroup group) {
 		_groups.add(group);
 	}
+
+	/**
+	 * Remove a group
+	 * 
+	 * @param group
+	 *            The group to remove
+	 */
+	public void removeGroup(JobGroup group) {
+		_groups.remove(group);
+	}
 }
