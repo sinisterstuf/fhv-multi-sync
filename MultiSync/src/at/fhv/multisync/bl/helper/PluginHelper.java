@@ -59,8 +59,7 @@ public class PluginHelper {
 	/**
 	 * Get a suitable provider for the given path
 	 * 
-	 * @param pathname
-	 *            The path to check
+	 * @param pathname The path to check
 	 * @return The provider or null if no suitable provider could be found
 	 */
 	public static FileSystemProvider getSuitableProvider(String pathname) {
@@ -79,16 +78,17 @@ public class PluginHelper {
 	/**
 	 * Get the protocol of a path name
 	 * 
-	 * @param pathname
-	 *            The pathname from which the protocol should be extracted
+	 * @param pathname The pathname from which the protocol should be extracted
 	 * @return The protocol or the pathname if no protocol was found
 	 */
 	private static String getProtocol(String pathname) {
-		pathname = pathname.replaceAll("\\\\", "//");
-		Matcher matcher = _protocolPattern.matcher(pathname);
+		if (pathname != null) {
+			pathname = pathname.replaceAll("\\\\", "//");
+			Matcher matcher = _protocolPattern.matcher(pathname);
 
-		if (matcher.find()) {
-			return matcher.group();
+			if (matcher.find()) {
+				return matcher.group();
+			}
 		}
 		return pathname;
 	}
