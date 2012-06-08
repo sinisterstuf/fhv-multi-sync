@@ -24,8 +24,8 @@
 
 package at.fhv.multisync.bl.sync;
 
-import java.io.Console;
 import java.io.File;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -37,9 +37,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.PatternSyntaxException;
+
+import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.MessageConsole;
+import org.eclipse.ui.console.MessageConsoleStream;
 
 import at.fhv.multisync.model.Job;
 
@@ -189,106 +193,18 @@ public class Sync {
 	/** statistic: number of warnings encountered */
 	private static int reportNumWarnings = 0;
 
-	/**
-	 * Main entry point for the Sync program.
-	 * 
-	 * @param args
-	 *            Command-line argument strings
-	 */
-	public static void main(final String[] args) {
-		/* initialize standard output and error streams */
-		final Console console = System.console();
-
-		if (console == null) {
-			Sync.stdout = new PrintWriter(System.out);
-			Sync.stderr = new PrintWriter(System.err);
-		} else {
-			Sync.stdout = console.writer();
-			Sync.stderr = console.writer();
-		}
-
-		/* display program title */
-		SyncIO.printFlush("\n" + Sync.PROGRAM_TITLE);
-
-		/* exit status code to be reported to the OS when exiting (default = 0) */
-		int exitCode = 0;
-
-		try {
-			/* determine if this is a Windows OS */
-			Sync.isWindowsOperatingSystem = System.getProperty("os.name")
-					.toUpperCase(Locale.ENGLISH).contains("WINDOWS")
-					&& (File.separatorChar == '\\');
-
-			/*
-			 * process command-line arguments and configure synchronization
-			 * parameters
-			 */
-			// processArguments(args);
-
-			SyncIO.printLog("\n" + Sync.PROGRAM_TITLE);
-
-			/* perform synchronization */
-			switch (Sync.syncMode) {
-			case DIRECTORY:
-				syncDirectory();
-				break;
-
-			case FILE:
-				syncFile();
-				break;
-			}
-
-			SyncIO.print("\n\nSync is done!\n\n");
-		} catch (TerminatingException e) {
-			/* terminating exception thrown; proceed to abort program */
-			/*
-			 * (this should be the only place where a TerminatingException is
-			 * caught)
-			 */
-
-			exitCode = e.getExitCode();
-
-			if (exitCode != 0) {
-				/* abnormal termination; SyncIO.print error message */
-				SyncIO.printToErr("\n\nERROR: " + e.getMessage() + "\n");
-				SyncIO.print("\nSync aborted.\n\n");
-			}
-		} catch (Exception e) {
-			/* catch all other exceptions; proceed to abort program */
-			SyncIO.printToErr("\n\nERROR: An unexpected error has occurred:\n"
-					+ getExceptionMessage(e) + "\n");
-
-			exitCode = 1;
-			SyncIO.print("\nSync aborted.\n\n");
-		} finally {
-			/* perform clean-up before exiting */
-			Sync.stdout.flush();
-			Sync.stderr.flush();
-
-			if (Sync.log != null) {
-				Sync.log.flush();
-				Sync.log.close();
-				Sync.log = null;
-			}
-		}
-
-		System.exit(exitCode);
-	}
-
 	public static void syncJob(Job job) {
 
-		// Sync.stdout = new TableOutputStream(System.out);
-		// Sync.stderr = new TableOutputStream(System.err);
+		// initialize the console
+		MessageConsole console = new MessageConsole("SyncLog", null);
+		ConsolePlugin.getDefault().getConsoleManager()
+				.addConsoles(new IConsole[] { console });
 
-		// final Console console = System.console();
-
-		// if (console == null) {
-		Sync.stdout = new PrintWriter(System.out);
-		Sync.stderr = new PrintWriter(System.err);
-		// } else {
-		// Sync.stdout = console.writer();
-		// Sync.stderr = console.writer();
-		// }
+		// redirect output stream
+		final MessageConsoleStream stream = console.newMessageStream();
+		final PrintStream print = new PrintStream(stream);
+		Sync.stdout = new PrintWriter(print);
+		Sync.stderr = new PrintWriter(print);
 
 		/* display program title */
 		SyncIO.printFlush("\n" + Sync.PROGRAM_TITLE);
@@ -2289,13 +2205,8 @@ public class Sync {
 	static void reportWarning(final Object message) {
 		Sync.reportNumWarnings++;
 
-		if (Sync.ignoreWarnings) {
+		if (!Sync.ignoreWarnings) {
 			SyncIO.printToErr("\n\nWARNING: " + message + "\n");
-		} else {
-			SyncIO.printToErr("\n\nWARNING: " + message
-					+ "\nPress ENTER to continue...");
-
-			(new Scanner(System.in)).nextLine(); // blocks until user responds
 		}
 	}
 
