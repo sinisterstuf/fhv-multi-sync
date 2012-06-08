@@ -154,13 +154,11 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobEdit"
             description="Edits a job"
             id="at.multisync.job.edit"
             name="Edit job">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.ui.handlers.HandlerRunSync"
             description="Run sync program"
             id="at.multisync.RunSync"
             name="Run sync">
@@ -171,7 +169,6 @@
             name="Show Job Preferences">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobAdd"
             description="Adds a new job."
             id="at.multisync.job.add"
             name="Add job">
@@ -183,7 +180,6 @@
             name="Add group">
       </command>
       <command
-            defaultHandler="at.fhv.multisync.ui.handlers.HandlerRemoveJob"
             description="Removes a job or job group"
             id="at.multisync.job.remove"
             name="Remove job/group">
@@ -254,8 +250,68 @@
          point="org.eclipse.ui.handlers">
       <handler
             class="at.fhv.multisync.ui.handlers.HandlerRunSync"
-            commandId="at.fhv.multisync.ui.handlers.HandlerRunSync">
-         <enabledWhen></enabledWhen>
+            commandId="at.multisync.RunSync">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="at.fhv.multisync.model.Job">
+                     </instanceof>
+                     <instanceof
+                           value="at.fhv.multisync.model.JobGroup">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with></enabledWhen>
+      </handler>
+      <handler
+            class="at.fhv.multisync.ui.handlers.HandlerJobAdd"
+            commandId="at.multisync.job.add">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <instanceof
+                        value="at.fhv.multisync.model.JobGroup">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="at.fhv.multisync.ui.handlers.HandlerRemoveJob"
+            commandId="at.multisync.job.remove">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <or>
+                     <instanceof
+                           value="at.fhv.multisync.model.Job">
+                     </instanceof>
+                     <instanceof
+                           value="at.fhv.multisync.model.JobGroup">
+                     </instanceof>
+                  </or>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="at.fhv.multisync.ui.handlers.HandlerJobEdit"
+            commandId="at.multisync.job.edit">
+         <enabledWhen>
+            <with
+                  variable="selection">
+               <iterate>
+                  <instanceof
+                        value="at.fhv.multisync.model.Job">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enabledWhen>
       </handler>
    </extension>
 
