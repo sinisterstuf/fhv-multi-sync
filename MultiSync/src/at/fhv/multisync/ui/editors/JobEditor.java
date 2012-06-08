@@ -361,10 +361,10 @@ public class JobEditor extends EditorPart {
 			public Object getProperty(){return selectedJob.isNoTimeMatch();};	
 			public String getPropertyDescription(){return "Do not use last-modified time for file-matching"; };});
 		
-//		Time Tolerance
+		// TIME TOLERANCE <<< Y U NO HAZ SETTER?!
 //		preference.add(new SettingKeyValue(){
-//			public void setProperty(Object o){selectedJob.setNoTimeMatch((Boolean)o);}
-//			public Object getProperty(){return selectedJob.isNoTimeMatch();};	
+//			public void setProperty(Object o){selectedJob.setTimeTolerance((Long)o);} //method missing
+//			public Object getProperty(){return selectedJob.getTimeTolerance();};	
 //			public String getPropertyDescription(){return ""; };});
 		
 		preference.add(new SettingKeyValue(){
