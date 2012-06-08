@@ -24,13 +24,6 @@ public class JobModel {
 	private JobModel() {
 
 		_groups = new ArrayList<JobGroup>();
-		// FIXME for testing only
-		JobGroup group = new JobGroup("MyGroup");
-		Job j1 = new Job("Job 1");
-		j1.addSlave("C:\\tmp");
-		j1.setMaster("C:\\master");
-		group.addJob(j1);
-		_groups.add(group);
 
 		// add a 'WorkBenchListener called when exiting the application
 		PlatformUI.getWorkbench().addWorkbenchListener(
@@ -50,7 +43,7 @@ public class JobModel {
 					}
 				});
 
-		// load();
+		load();
 
 	}
 
@@ -77,8 +70,7 @@ public class JobModel {
 	/**
 	 * Add a group.
 	 * 
-	 * @param group
-	 *            The group to add.
+	 * @param group The group to add.
 	 */
 	public void addGroup(JobGroup group) {
 		_groups.add(group);
@@ -87,8 +79,7 @@ public class JobModel {
 	/**
 	 * Remove a group
 	 * 
-	 * @param group
-	 *            The group to remove
+	 * @param group The group to remove
 	 */
 	public void removeGroup(JobGroup group) {
 		_groups.remove(group);
