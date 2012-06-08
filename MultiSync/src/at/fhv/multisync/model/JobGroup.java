@@ -2,7 +2,6 @@ package at.fhv.multisync.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 import at.fhv.multisync.model.helper.SerializationHelper;
 
@@ -94,7 +93,7 @@ public class JobGroup implements Serializable {
 	 * 
 	 * @return The jobs
 	 */
-	public List<Job> getJobs() {
+	public ArrayList<Job> getJobs() {
 		return _jobs;
 	}
 
