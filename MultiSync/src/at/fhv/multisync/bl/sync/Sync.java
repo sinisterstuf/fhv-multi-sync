@@ -411,9 +411,9 @@ public class Sync {
 
 		if (job.isStdLog() == true) {
 			/* create log file "sync.yyyyMMdd-HHmmss.log" */
-			if (Sync.logName != null)
-				throw new TerminatingException(
-						"Switch --log can be specified at most once." + howHelp);
+			// if (Sync.logName != null)
+			// throw new TerminatingException(
+			// "Switch --log can be specified at most once." + howHelp);
 
 			final String timestamp = String.format(
 					"%1$tY%1$tm%1$td-%1$tH%1$tM%1$tS",
