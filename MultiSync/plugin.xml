@@ -57,6 +57,21 @@
          <menu
                label="File">
             <command
+                  commandId="at.multisync.job.add"
+                  label="New Job"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.multisync.jobgroup.add"
+                  label="New Group"
+                  style="push">
+            </command>
+            <command
+                  commandId="at.multisync.RunSync"
+                  label="Run Sync"
+                  style="push">
+            </command>
+            <command
                   commandId="org.eclipse.ui.file.exit"
                   label="Exit">
             </command>
@@ -169,13 +184,13 @@
             name="Show Job Preferences">
       </command>
       <command
-            description="Adds a new job."
+            description="Adds a new job"
             id="at.multisync.job.add"
             name="Add job">
       </command>
       <command
             defaultHandler="at.fhv.multisync.ui.handlers.HandlerJobGroupAdd"
-            description="Adds a new job group."
+            description="Adds a new job group"
             id="at.multisync.jobgroup.add"
             name="Add group">
       </command>
