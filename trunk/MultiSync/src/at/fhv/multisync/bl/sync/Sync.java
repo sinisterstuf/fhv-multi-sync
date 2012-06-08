@@ -193,6 +193,11 @@ public class Sync {
 	/** statistic: number of warnings encountered */
 	private static int reportNumWarnings = 0;
 
+	/**
+	 * Sync a Job
+	 * 
+	 * @param job
+	 */
 	public static void syncJob(Job job) {
 
 		// initialize the console
