@@ -26,8 +26,9 @@ public class SerializationHelper {
 
 	static {
 		try {
-			URL url = new URL(
-					(Platform.getInstallLocation().getURL() + DEFAULT_FILENAME));
+			URL url =
+					new URL(
+							(Platform.getInstallLocation().getURL() + DEFAULT_FILENAME));
 			DEFAULT_LOCATION = url.toString().replace("file:/", "");
 			System.out.println("DEFAULT_LOCATION: " + DEFAULT_LOCATION);
 		} catch (MalformedURLException e) {
@@ -48,8 +49,7 @@ public class SerializationHelper {
 	/**
 	 * Serialize an object to the default location
 	 * 
-	 * @param object
-	 *            The object to serialize
+	 * @param object The object to serialize
 	 */
 	public static void serialize(Serializable object) {
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
@@ -115,7 +115,7 @@ public class SerializationHelper {
 						objIn = new ObjectInputStream(fIn);
 
 						T tmp = (T) objIn.readObject();
-						out.add(tmp);
+						out = (ArrayList<T>) tmp;
 					}
 					// process single file
 				} else {
@@ -124,14 +124,10 @@ public class SerializationHelper {
 					objIn = new ObjectInputStream(fIn);
 
 					T tmp = (T) objIn.readObject();
-					out.add(tmp);
+					out = (ArrayList<T>) tmp;
 				}
 			} catch (Exception e) {
-
-				// show the error
-				MessageDialog.openError(PlatformUI.getWorkbench().getDisplay()
-						.getActiveShell(), "Error deserializing object.",
-						e.getMessage());
+				// ignore
 			} finally {
 
 				// close object output
