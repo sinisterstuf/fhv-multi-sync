@@ -218,7 +218,7 @@ public class JobEditor extends EditorPart {
 		ScrolledComposite prefscroll = new ScrolledComposite(masterTabFolder, SWT.V_SCROLL);
 		Composite prefcomp = new Composite(prefscroll, SWT.NONE);
 		GridLayout layoutPref  = new GridLayout();
-		layoutPref.numColumns = 1;
+		layoutPref.numColumns = 2;
 		
 		prefcomp.setLayout(layoutPref);
 		
@@ -232,7 +232,10 @@ public class JobEditor extends EditorPart {
 			{
 				final Button button = new Button(prefcomp, SWT.CHECK);
 				button.setText(pref.getPropertyDescription());
-				button.setSelection((Boolean)pref.getProperty());
+				button.setSelection((Boolean)pref.getProperty());	
+				GridData gridData = new GridData();
+				gridData.horizontalSpan = 2;
+				button.setLayoutData(gridData);		
 				button.addMouseListener(new MouseListener() {
 					
 					@Override public void mouseUp(MouseEvent e) {
@@ -245,7 +248,11 @@ public class JobEditor extends EditorPart {
 			}
 			if(pref.getProperty().getClass() == String.class)
 			{
+
+				Label lbl = new Label(prefcomp, SWT.None);
 				final Text txt = new Text(prefcomp, SWT.CHECK);
+				
+				lbl.setText(pref.getPropertyDescription());				
 				txt.setText((String)pref.getProperty());
 				txt.setToolTipText(pref.getPropertyDescription());
 				txt.addFocusListener(new FocusListener() {
