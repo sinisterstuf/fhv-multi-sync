@@ -114,8 +114,7 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Change the dirty state and fire event.
 	 * 
-	 * @param dirty
-	 *            The new dirty state
+	 * @param dirty The new dirty state
 	 */
 	private void setDirty(boolean dirty) {
 		_dirty = dirty;
@@ -153,8 +152,9 @@ public class JobEditor extends EditorPart {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// get the file system provider
-				StructuredSelection selected = (StructuredSelection) _slaveCombo
-						.getSelection();
+				StructuredSelection selected =
+						(StructuredSelection) _slaveCombo
+								.getSelection();
 				FileSystemProvider provider = (FileSystemProvider) selected
 						.getFirstElement();
 
@@ -170,11 +170,14 @@ public class JobEditor extends EditorPart {
 		tree.setLayoutData(gd_tree);
 
 		// load data
+		String masterDir =
+				(_job.getMaster() != null) ? _job.getMaster() : "C://";
 		showFileSystem(_masterDirTree,
-				PluginHelper.getSuitableProvider(_job.getMaster()));
+				PluginHelper.getSuitableProvider(masterDir));
 
 		// set as selected
-		if (_masterDirTree != null && !_job.getMaster().isEmpty()) {
+		if (_masterDirTree != null && _job.getMaster() != null
+				&& !_job.getMaster().isEmpty()) {
 			File master = new File(_job.getMaster());
 			StructuredSelection sel = new StructuredSelection(master);
 			_masterDirTree.setSelection(sel, true);
@@ -209,8 +212,7 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Load all slaves in the job to the given tab folder
 	 * 
-	 * @param folder
-	 *            The tab folder to load the slaves in
+	 * @param folder The tab folder to load the slaves in
 	 */
 	private void loadSlaves(CTabFolder folder) {
 		for (String s : _job.getSlaves()) {
@@ -226,8 +228,7 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Add all available file system provider to a combobox
 	 * 
-	 * @param combo
-	 *            The combobox to which all the providers will be added
+	 * @param combo The combobox to which all the providers will be added
 	 */
 	private void addFileSystemProvider(ComboViewer combo) {
 		// create the input list
@@ -242,10 +243,8 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Show the file system in the given tree
 	 * 
-	 * @param tree
-	 *            The tree in which the files should be shown
-	 * @param provider
-	 *            The provider of the file system
+	 * @param tree The tree in which the files should be shown
+	 * @param provider The provider of the file system
 	 */
 	private void showFileSystem(TreeViewer tree, FileSystemProvider provider) {
 		if (provider != null) {
@@ -258,8 +257,7 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Initialize the slave tab folder
 	 * 
-	 * @param folder
-	 *            The tab folder to initialize
+	 * @param folder The tab folder to initialize
 	 * @return The created treeviewer in the tab
 	 */
 	private TreeViewer initializeTab(CTabFolder folder,
