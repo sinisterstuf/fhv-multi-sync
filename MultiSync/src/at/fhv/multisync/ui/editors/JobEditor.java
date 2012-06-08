@@ -295,18 +295,74 @@ public class JobEditor extends EditorPart {
 		void setProperty(Object o);
 	}
 	
+	/**
+	 * Returns a list of preference items to be displayed by the editor.
+	 * @return List of values
+	 * TODO: implement log file setting and toggle setting for logging
+	 */
 	private List<SettingKeyValue> getPreferenceList() {
 		List<SettingKeyValue> preference = new ArrayList<SettingKeyValue>();
 
 		preference.add(new SettingKeyValue(){
-					public void setProperty(Object o){selectedJob.setName((String)o);}
-					public Object getProperty(){return selectedJob.getName();};	
-					public String getPropertyDescription(){return "Set name match; incase blablabla"; };});
-
+			public void setProperty(Object o){selectedJob.setName((String)o);}
+			public Object getProperty(){return selectedJob.getName();};	
+			public String getPropertyDescription(){return "Name"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setSimulteOnly((Boolean)o);}
+			public Object getProperty(){return selectedJob.isSimulateOnly();};	
+			public String getPropertyDescription(){return "Simulate only; do not modify target"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setIgnoreWarnings((Boolean)o);}
+			public Object getProperty(){return selectedJob.isIgnoreWarnings();};	
+			public String getPropertyDescription(){return "Ignore warnings; do not pause" ; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setNoRecurse((Boolean)o);}
+			public Object getProperty(){return selectedJob.isNoRecurse();};	
+			public String getPropertyDescription(){return "Do not recurse into subdirectories"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setNoNameMatch((Boolean)o);}
+			public Object getProperty(){return selectedJob.isNoNameMatch();};	
+			public String getPropertyDescription(){return "Do not use filename for file-matching"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setNoTimeMatch((Boolean)o);}
+			public Object getProperty(){return selectedJob.isNoTimeMatch();};	
+			public String getPropertyDescription(){return "Do not use last-modified time for file-matching"; };});
+		
+//		Time Tolerance
+//		preference.add(new SettingKeyValue(){
+//			public void setProperty(Object o){selectedJob.setNoTimeMatch((Boolean)o);}
+//			public Object getProperty(){return selectedJob.isNoTimeMatch();};	
+//			public String getPropertyDescription(){return ""; };});
+		
 		preference.add(new SettingKeyValue(){
 			public void setProperty(Object o){selectedJob.setNoCrcMatch((Boolean)o);}
 			public Object getProperty(){return selectedJob.isNoCrcMatch();};	
-			public String getPropertyDescription(){return "do not use CRC-32 checksum for file-matching"; };});
+			public String getPropertyDescription(){return "Do not use CRC-32 checksum for file-matching"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setRenameTarget((Boolean)o);}
+			public Object getProperty(){return selectedJob.isRenameTarget();};	
+			public String getPropertyDescription(){return "Rename matched target files"; };});
+		
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setOverwriteTarget((Boolean)o);}
+			public Object getProperty(){return selectedJob.isOverwriteTarget();};	
+			public String getPropertyDescription(){return "Overwrite existing target files"; };});
+		
+//		preference.add(new SettingKeyValue(){
+//			//public void setProperty(Object o){selectedJob.setStdLog((Boolean)o);} //method missing
+//			public Object getProperty(){return selectedJob.isStdLog();};	
+//			public String getPropertyDescription(){return "Use std logging"; };});
+//		
+//		preference.add(new SettingKeyValue(){
+//			//public void setProperty(Object o){selectedJob.set((String)o);} //method missing
+//			public Object getProperty(){return selectedJob.getLogFile();};	
+//			public String getPropertyDescription(){return "Log File"; };});
 		
 		
 		return preference;
