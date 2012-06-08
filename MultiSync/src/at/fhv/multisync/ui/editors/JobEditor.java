@@ -252,7 +252,7 @@ public class JobEditor extends EditorPart {
 				Label lbl = new Label(prefcomp, SWT.None);
 				final Text txt = new Text(prefcomp, SWT.CHECK);
 				
-				lbl.setText(pref.getPropertyDescription()+".:");				
+				lbl.setText(pref.getPropertyDescription()+":");				
 				txt.setText((String)pref.getProperty());
 				txt.setToolTipText(pref.getPropertyDescription());
 				txt.addFocusListener(new FocusListener() {
