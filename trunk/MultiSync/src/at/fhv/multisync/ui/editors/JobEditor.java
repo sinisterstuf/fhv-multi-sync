@@ -163,17 +163,9 @@ public class JobEditor extends EditorPart {
 			}
 		});
 
-		_masterDirTree = new TreeViewer(parent, SWT.BORDER);
-		Tree tree = _masterDirTree.getTree();
-		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1);
-		gd_tree.widthHint = 118;
-		tree.setLayoutData(gd_tree);
-
 		// load data
 		String masterDir =
 				(_job.getMaster() != null) ? _job.getMaster() : "C://";
-		showFileSystem(_masterDirTree,
-				PluginHelper.getSuitableProvider(masterDir));
 
 		// set as selected
 		if (_masterDirTree != null && _job.getMaster() != null
@@ -182,6 +174,21 @@ public class JobEditor extends EditorPart {
 			StructuredSelection sel = new StructuredSelection(master);
 			_masterDirTree.setSelection(sel, true);
 		}
+
+		CTabFolder masterTabFolder = new CTabFolder(parent, SWT.BORDER);
+		masterTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				true, 1, 1));
+		masterTabFolder.setSelectionBackground(Display.getCurrent()
+				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+
+		CTabItem masterTab = new CTabItem(masterTabFolder, SWT.NONE);
+		masterTab.setText("Master");
+
+		_masterDirTree = new TreeViewer(masterTabFolder, SWT.BORDER);
+		Tree tree = _masterDirTree.getTree();
+		masterTab.setControl(tree);
+		showFileSystem(_masterDirTree,
+				PluginHelper.getSuitableProvider(masterDir));
 
 		_masterDirTree
 				.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -194,9 +201,12 @@ public class JobEditor extends EditorPart {
 
 		getSite().setSelectionProvider(_masterDirTree);
 
+		CTabItem tbtmPreferences = new CTabItem(masterTabFolder, SWT.NONE);
+		tbtmPreferences.setText("Preferences");
+
 		_slaveDirTabFolder = new CTabFolder(parent, SWT.BORDER);
 		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				false, 2, 1));
+				true, 2, 1));
 		_slaveDirTabFolder.setSelectionBackground(Display.getCurrent()
 				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		_slaveDirTabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {

@@ -250,5 +250,13 @@
             class="at.fhv.multisync.extension.impl.LocalFileSystemProvider">
       </FileSystemProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="at.fhv.multisync.ui.handlers.HandlerRunSync"
+            commandId="at.fhv.multisync.ui.handlers.HandlerRunSync">
+         <enabledWhen></enabledWhen>
+      </handler>
+   </extension>
 
 </plugin>
