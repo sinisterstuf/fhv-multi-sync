@@ -15,7 +15,7 @@ import at.fhv.multisync.model.helper.SerializationHelper;
 public class JobGroup implements Serializable {
 	private static final long serialVersionUID = -3930715948623517171L;
 
-	private final List<Job> _jobs;
+	private final ArrayList<Job> _jobs;
 	private String _name;
 
 	/**

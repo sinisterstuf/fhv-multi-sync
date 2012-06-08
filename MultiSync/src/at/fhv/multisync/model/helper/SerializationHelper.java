@@ -22,12 +22,14 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SerializationHelper {
 	private static String DEFAULT_LOCATION;
+	private static String DEFAULT_FILENAME = "JobGroups";
 
 	static {
 		try {
-			URL url = new URL(Platform.getInstallLocation().getURL()
-					+ Platform.getProduct().getName());
-			DEFAULT_LOCATION = url.toString();
+			URL url = new URL(
+					(Platform.getInstallLocation().getURL() + DEFAULT_FILENAME));
+			DEFAULT_LOCATION = url.toString().replace("file:/", "");
+			System.out.println("DEFAULT_LOCATION: " + DEFAULT_LOCATION);
 		} catch (MalformedURLException e) {
 			MessageDialog.openError(PlatformUI.getWorkbench().getDisplay()
 					.getActiveShell(),
@@ -46,7 +48,8 @@ public class SerializationHelper {
 	/**
 	 * Serialize an object to the default location
 	 * 
-	 * @param object The object to serialize
+	 * @param object
+	 *            The object to serialize
 	 */
 	public static void serialize(Serializable object) {
 		if (DEFAULT_LOCATION != null && !DEFAULT_LOCATION.isEmpty()) {
