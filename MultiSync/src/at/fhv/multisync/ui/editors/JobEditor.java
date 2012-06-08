@@ -1,9 +1,11 @@
 package at.fhv.multisync.ui.editors;
 
+import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.internal.preferences.PrefsMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -18,14 +20,22 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -46,7 +56,8 @@ public class JobEditor extends EditorPart {
 	private TreeViewer _masterDirTree;
 	private CTabFolder _slaveDirTabFolder;
 	private ComboViewer _slaveCombo;
-
+	private Job selectedJob;
+	
 	/**
 	 * Default constructor.
 	 */
@@ -176,8 +187,7 @@ public class JobEditor extends EditorPart {
 		}
 
 		CTabFolder masterTabFolder = new CTabFolder(parent, SWT.BORDER);
-		masterTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				true, 1, 1));
+		masterTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,true, 1, 1));
 		masterTabFolder.setSelectionBackground(Display.getCurrent()
 				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 
@@ -203,6 +213,58 @@ public class JobEditor extends EditorPart {
 
 		CTabItem tbtmPreferences = new CTabItem(masterTabFolder, SWT.NONE);
 		tbtmPreferences.setText("Preferences");
+		
+		// preferences or settings
+		ScrolledComposite prefscroll = new ScrolledComposite(masterTabFolder, SWT.V_SCROLL);
+		Composite prefcomp = new Composite(prefscroll, SWT.NONE);
+		GridLayout layoutPref  = new GridLayout();
+		layoutPref.numColumns = 1;
+		
+		prefcomp.setLayout(layoutPref);
+		
+		selectedJob = ((JobEditorInput)getEditorInput()).getJob();
+
+		List<SettingKeyValue> preference = getPreferenceList();
+	
+		for (final SettingKeyValue pref : preference)
+		{	
+			if(pref.getProperty().getClass() == Boolean.class)
+			{
+				final Button button = new Button(prefcomp, SWT.CHECK);
+				button.setText(pref.getPropertyDescription());
+				button.setSelection((Boolean)pref.getProperty());
+				button.addMouseListener(new MouseListener() {
+					
+					@Override public void mouseUp(MouseEvent e) {
+						pref.setProperty(button.getSelection());}
+					
+					@Override public void mouseDown(MouseEvent e) {}
+					
+					@Override public void mouseDoubleClick(MouseEvent e) {}
+				});
+			}
+			if(pref.getProperty().getClass() == String.class)
+			{
+				final Text txt = new Text(prefcomp, SWT.CHECK);
+				txt.setText((String)pref.getProperty());
+				txt.setToolTipText(pref.getPropertyDescription());
+				txt.addFocusListener(new FocusListener() {
+					
+					@Override public void focusLost(FocusEvent e) {						
+						if(txt.getText().compareTo((String)pref.getProperty()) != 0)
+							pref.setProperty(txt.getText());
+					}
+					@Override public void focusGained(FocusEvent e) {}
+				});
+			}
+		}
+				
+		prefscroll.setContent(prefcomp);
+		prefscroll.setExpandHorizontal(true);
+	    prefscroll.setExpandVertical(true);
+	    prefscroll.setMinSize(prefcomp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+	    tbtmPreferences.setControl(prefscroll);
 
 		_slaveDirTabFolder = new CTabFolder(parent, SWT.BORDER);
 		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
@@ -217,6 +279,30 @@ public class JobEditor extends EditorPart {
 		});
 
 		loadSlaves(_slaveDirTabFolder);
+	}
+
+	
+	interface SettingKeyValue{
+		String getPropertyDescription();
+		Object getProperty();
+		void setProperty(Object o);
+	}
+	
+	private List<SettingKeyValue> getPreferenceList() {
+		List<SettingKeyValue> preference = new ArrayList<SettingKeyValue>();
+
+		preference.add(new SettingKeyValue(){
+					public void setProperty(Object o){selectedJob.setName((String)o);}
+					public Object getProperty(){return selectedJob.getName();};	
+					public String getPropertyDescription(){return "Set name match; incase blablabla"; };});
+
+		preference.add(new SettingKeyValue(){
+			public void setProperty(Object o){selectedJob.setNoCrcMatch((Boolean)o);}
+			public Object getProperty(){return selectedJob.isNoCrcMatch();};	
+			public String getPropertyDescription(){return "do not use CRC-32 checksum for file-matching"; };});
+		
+		
+		return preference;
 	}
 
 	/**
