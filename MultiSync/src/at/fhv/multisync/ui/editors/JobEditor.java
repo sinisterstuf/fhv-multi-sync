@@ -298,7 +298,12 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Returns a list of preference items to be displayed by the editor.
 	 * @return List of values
-	 * TODO: implement log file setting and toggle setting for logging
+	 * 
+	 * The following preference items are missing setters:
+	 * TODO: implement Boolean StdLog
+	 * TODO: implement String LogFile
+	 * TODO: implement Boolean SyncTimeOfTarget
+	 * Actually I just realised that everything after _overwriteTarget has no setter O_o
 	 */
 	private List<SettingKeyValue> getPreferenceList() {
 		List<SettingKeyValue> preference = new ArrayList<SettingKeyValue>();
@@ -364,6 +369,15 @@ public class JobEditor extends EditorPart {
 //			public Object getProperty(){return selectedJob.getLogFile();};	
 //			public String getPropertyDescription(){return "Log File"; };});
 		
+//		preference.add(new SettingKeyValue(){
+//			public void setProperty(Object o){selectedJob.set((Boolean)o);} //method missing
+//			public Object getProperty(){return selectedJob.isSyncTimeOfTarget();};	
+//			public String getPropertyDescription(){return ""; };});
+		
+//		preference.add(new SettingKeyValue(){
+//			public void setProperty(Object o){selectedJob.setDeleteTarget((Boolean)o);} //method missing
+//			public Object getProperty(){return selectedJob.isDeleteTarget();};	
+//			public String getPropertyDescription(){return ""; };});
 		
 		return preference;
 	}
