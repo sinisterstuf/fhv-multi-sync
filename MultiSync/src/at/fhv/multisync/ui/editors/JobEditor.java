@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -260,6 +261,28 @@ public class JobEditor extends EditorPart {
 					@Override public void focusLost(FocusEvent e) {						
 						if(txt.getText().compareTo((String)pref.getProperty()) != 0)
 							pref.setProperty(txt.getText());
+					}
+					@Override public void focusGained(FocusEvent e) {}
+				});
+			}
+			
+			if(pref.getProperty().getClass() == Long.class || pref.getProperty().getClass() == Long.class)
+			{
+
+				Label lbl = new Label(prefcomp, SWT.None);
+				final Spinner spin = new Spinner(prefcomp, SWT.CHECK);
+				
+				lbl.setText(pref.getPropertyDescription()+":");				
+				spin.setDigits(0);
+				spin.setMinimum(0);
+				spin.setIncrement(100);
+				spin.setSelection(((Long)pref.getProperty()).intValue());
+				spin.setToolTipText(pref.getPropertyDescription());
+				spin.addFocusListener(new FocusListener() {
+					
+					@Override public void focusLost(FocusEvent e) {						
+						if(spin.getSelection() == (Long)pref.getProperty())
+							pref.setProperty(spin.getSelection());
 					}
 					@Override public void focusGained(FocusEvent e) {}
 				});
