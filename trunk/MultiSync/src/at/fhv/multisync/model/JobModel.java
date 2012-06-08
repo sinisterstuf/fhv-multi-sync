@@ -2,6 +2,10 @@ package at.fhv.multisync.model;
 
 import java.util.ArrayList;
 
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
+import org.eclipse.ui.PlatformUI;
+
 import at.fhv.multisync.model.helper.SerializationHelper;
 
 /**
@@ -14,9 +18,12 @@ public class JobModel {
 	private static JobModel INSTANCE;
 	private ArrayList<JobGroup> _groups;
 
-	{
-		_groups = new ArrayList<JobGroup>();
+	/**
+	 * Default constructor.
+	 */
+	private JobModel() {
 
+		_groups = new ArrayList<JobGroup>();
 		// FIXME for testing only
 		JobGroup group = new JobGroup("MyGroup");
 		Job j1 = new Job("Job 1");
@@ -24,13 +31,27 @@ public class JobModel {
 		j1.setMaster("C:\\master");
 		group.addJob(j1);
 		_groups.add(group);
-	}
 
-	/**
-	 * Default constructor.
-	 */
-	private JobModel() {
-		// _groups = SerializationHelper.deserialize();
+		// add a 'WorkBenchListener called when exiting the application
+		PlatformUI.getWorkbench().addWorkbenchListener(
+				new IWorkbenchListener() {
+
+					@Override
+					public boolean preShutdown(IWorkbench workbench,
+							boolean forced) {
+						save();
+						return true;
+					}
+
+					@Override
+					public void postShutdown(IWorkbench workbench) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+
+		// load();
+
 	}
 
 	/**
@@ -54,15 +75,6 @@ public class JobModel {
 	}
 
 	/**
-	 * Save the jobs
-	 */
-	public void save() {
-		if (_groups != null) {
-			SerializationHelper.serialize(_groups);
-		}
-	}
-
-	/**
 	 * Add a group.
 	 * 
 	 * @param group
@@ -81,4 +93,25 @@ public class JobModel {
 	public void removeGroup(JobGroup group) {
 		_groups.remove(group);
 	}
+
+	/**
+	 * Save the jobs
+	 */
+	public void save() {
+		if (_groups != null) {
+			SerializationHelper.serialize(_groups);
+		}
+	}
+
+	/**
+	 * Load the jobs
+	 */
+	public void load() {
+		try {
+			_groups = SerializationHelper.deserialize();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
