@@ -1,11 +1,9 @@
 package at.fhv.multisync.ui.editors;
 
-import java.io.Console;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.internal.preferences.PrefsMessages;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -21,14 +19,11 @@ import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -57,8 +52,8 @@ public class JobEditor extends EditorPart {
 	private TreeViewer _masterDirTree;
 	private CTabFolder _slaveDirTabFolder;
 	private ComboViewer _slaveCombo;
-	private Job selectedJob;
-	
+	private CTabFolder _masterTabFolder;
+
 	/**
 	 * Default constructor.
 	 */
@@ -126,7 +121,8 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Change the dirty state and fire event.
 	 * 
-	 * @param dirty The new dirty state
+	 * @param dirty
+	 *            The new dirty state
 	 */
 	private void setDirty(boolean dirty) {
 		_dirty = dirty;
@@ -164,9 +160,8 @@ public class JobEditor extends EditorPart {
 			@Override
 			public void mouseUp(MouseEvent e) {
 				// get the file system provider
-				StructuredSelection selected =
-						(StructuredSelection) _slaveCombo
-								.getSelection();
+				StructuredSelection selected = (StructuredSelection) _slaveCombo
+						.getSelection();
 				FileSystemProvider provider = (FileSystemProvider) selected
 						.getFirstElement();
 
@@ -175,9 +170,24 @@ public class JobEditor extends EditorPart {
 			}
 		});
 
+		_masterTabFolder = new CTabFolder(parent, SWT.BORDER);
+		_masterTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
+				true, 1, 1));
+		_masterTabFolder.setSelectionBackground(Display.getCurrent()
+				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
+
+		CTabItem masterTab = new CTabItem(_masterTabFolder, SWT.NONE);
+		masterTab.setText("Master");
+
+		_masterDirTree = new TreeViewer(_masterTabFolder, SWT.BORDER);
+		Tree tree = _masterDirTree.getTree();
+		masterTab.setControl(tree);
+
 		// load data
-		String masterDir =
-				(_job.getMaster() != null) ? _job.getMaster() : "C://";
+		String masterDir = (_job.getMaster() != null) ? _job.getMaster()
+				: "C://";
+		showFileSystem(_masterDirTree,
+				PluginHelper.getSuitableProvider(masterDir));
 
 		// set as selected
 		if (_masterDirTree != null && _job.getMaster() != null
@@ -186,20 +196,6 @@ public class JobEditor extends EditorPart {
 			StructuredSelection sel = new StructuredSelection(master);
 			_masterDirTree.setSelection(sel, true);
 		}
-
-		CTabFolder masterTabFolder = new CTabFolder(parent, SWT.BORDER);
-		masterTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,true, 1, 1));
-		masterTabFolder.setSelectionBackground(Display.getCurrent()
-				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
-
-		CTabItem masterTab = new CTabItem(masterTabFolder, SWT.NONE);
-		masterTab.setText("Master");
-
-		_masterDirTree = new TreeViewer(masterTabFolder, SWT.BORDER);
-		Tree tree = _masterDirTree.getTree();
-		masterTab.setControl(tree);
-		showFileSystem(_masterDirTree,
-				PluginHelper.getSuitableProvider(masterDir));
 
 		_masterDirTree
 				.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -212,89 +208,100 @@ public class JobEditor extends EditorPart {
 
 		getSite().setSelectionProvider(_masterDirTree);
 
-		CTabItem tbtmPreferences = new CTabItem(masterTabFolder, SWT.NONE);
+		CTabItem tbtmPreferences = new CTabItem(_masterTabFolder, SWT.NONE);
 		tbtmPreferences.setText("Preferences");
-		
+
 		// preferences or settings
-		ScrolledComposite prefscroll = new ScrolledComposite(masterTabFolder, SWT.V_SCROLL);
+		ScrolledComposite prefscroll = new ScrolledComposite(_masterTabFolder,
+				SWT.V_SCROLL);
 		Composite prefcomp = new Composite(prefscroll, SWT.NONE);
-		GridLayout layoutPref  = new GridLayout();
+		GridLayout layoutPref = new GridLayout();
 		layoutPref.numColumns = 2;
-		
+
 		prefcomp.setLayout(layoutPref);
-		
-		selectedJob = ((JobEditorInput)getEditorInput()).getJob();
 
 		List<SettingKeyValue> preference = getPreferenceList();
-	
-		for (final SettingKeyValue pref : preference)
-		{	
-			if(pref.getProperty().getClass() == Boolean.class)
-			{
+
+		for (final SettingKeyValue pref : preference) {
+			if (pref.getProperty().getClass() == Boolean.class) {
 				final Button button = new Button(prefcomp, SWT.CHECK);
 				button.setText(pref.getPropertyDescription());
-				button.setSelection((Boolean)pref.getProperty());	
+				button.setSelection((Boolean) pref.getProperty());
 				GridData gridData = new GridData();
 				gridData.horizontalSpan = 2;
-				button.setLayoutData(gridData);		
+				button.setLayoutData(gridData);
 				button.addMouseListener(new MouseListener() {
-					
-					@Override public void mouseUp(MouseEvent e) {
-						pref.setProperty(button.getSelection());}
-					
-					@Override public void mouseDown(MouseEvent e) {}
-					
-					@Override public void mouseDoubleClick(MouseEvent e) {}
+
+					@Override
+					public void mouseUp(MouseEvent e) {
+						pref.setProperty(button.getSelection());
+					}
+
+					@Override
+					public void mouseDown(MouseEvent e) {
+					}
+
+					@Override
+					public void mouseDoubleClick(MouseEvent e) {
+					}
 				});
 			}
-			if(pref.getProperty().getClass() == String.class)
-			{
+			if (pref.getProperty().getClass() == String.class) {
 
 				Label lbl = new Label(prefcomp, SWT.None);
 				final Text txt = new Text(prefcomp, SWT.CHECK);
-				
-				lbl.setText(pref.getPropertyDescription()+":");				
-				txt.setText((String)pref.getProperty());
+
+				lbl.setText(pref.getPropertyDescription() + ":");
+				txt.setText((String) pref.getProperty());
 				txt.setToolTipText(pref.getPropertyDescription());
 				txt.addFocusListener(new FocusListener() {
-					
-					@Override public void focusLost(FocusEvent e) {						
-						if(txt.getText().compareTo((String)pref.getProperty()) != 0)
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						if (txt.getText()
+								.compareTo((String) pref.getProperty()) != 0)
 							pref.setProperty(txt.getText());
 					}
-					@Override public void focusGained(FocusEvent e) {}
+
+					@Override
+					public void focusGained(FocusEvent e) {
+					}
 				});
 			}
-			
-			if(pref.getProperty().getClass() == Long.class || pref.getProperty().getClass() == Long.class)
-			{
+
+			if (pref.getProperty().getClass() == Long.class
+					|| pref.getProperty().getClass() == Long.class) {
 
 				Label lbl = new Label(prefcomp, SWT.None);
 				final Spinner spin = new Spinner(prefcomp, SWT.CHECK);
-				
-				lbl.setText(pref.getPropertyDescription()+":");				
+
+				lbl.setText(pref.getPropertyDescription() + ":");
 				spin.setDigits(0);
 				spin.setMinimum(0);
 				spin.setIncrement(100);
-				spin.setSelection(((Long)pref.getProperty()).intValue());
+				spin.setSelection(((Long) pref.getProperty()).intValue());
 				spin.setToolTipText(pref.getPropertyDescription());
 				spin.addFocusListener(new FocusListener() {
-					
-					@Override public void focusLost(FocusEvent e) {						
-						if(spin.getSelection() == (Long)pref.getProperty())
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						if (spin.getSelection() == (Long) pref.getProperty())
 							pref.setProperty(spin.getSelection());
 					}
-					@Override public void focusGained(FocusEvent e) {}
+
+					@Override
+					public void focusGained(FocusEvent e) {
+					}
 				});
 			}
 		}
-				
+
 		prefscroll.setContent(prefcomp);
 		prefscroll.setExpandHorizontal(true);
-	    prefscroll.setExpandVertical(true);
-	    prefscroll.setMinSize(prefcomp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		prefscroll.setExpandVertical(true);
+		prefscroll.setMinSize(prefcomp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
-	    tbtmPreferences.setControl(prefscroll);
+		tbtmPreferences.setControl(prefscroll);
 
 		_slaveDirTabFolder = new CTabFolder(parent, SWT.BORDER);
 		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
@@ -311,104 +318,220 @@ public class JobEditor extends EditorPart {
 		loadSlaves(_slaveDirTabFolder);
 	}
 
-	
-	interface SettingKeyValue{
+	interface SettingKeyValue {
 		String getPropertyDescription();
+
 		Object getProperty();
+
 		void setProperty(Object o);
 	}
-	
+
 	/**
 	 * Returns a list of preference items to be displayed by the editor.
+	 * 
 	 * @return List of values
 	 * 
-	 * The following preference items are missing setters:
-	 * TODO: implement Boolean StdLog
-	 * TODO: implement String LogFile
-	 * TODO: implement Boolean SyncTimeOfTarget
-	 * Actually I just realised that everything after _overwriteTarget has no setter O_o
+	 *         The following preference items are missing setters: TODO:
+	 *         implement Boolean StdLog TODO: implement String LogFile TODO:
+	 *         implement Boolean SyncTimeOfTarget Actually I just realised that
+	 *         everything after _overwriteTarget has no setter O_o
 	 */
 	private List<SettingKeyValue> getPreferenceList() {
 		List<SettingKeyValue> preference = new ArrayList<SettingKeyValue>();
 
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setName((String)o);}
-			public Object getProperty(){return selectedJob.getName();};	
-			public String getPropertyDescription(){return "Name"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setSimulteOnly((Boolean)o);}
-			public Object getProperty(){return selectedJob.isSimulateOnly();};	
-			public String getPropertyDescription(){return "Simulate only; do not modify target"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setIgnoreWarnings((Boolean)o);}
-			public Object getProperty(){return selectedJob.isIgnoreWarnings();};	
-			public String getPropertyDescription(){return "Ignore warnings; do not pause" ; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setNoRecurse((Boolean)o);}
-			public Object getProperty(){return selectedJob.isNoRecurse();};	
-			public String getPropertyDescription(){return "Do not recurse into subdirectories"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setNoNameMatch((Boolean)o);}
-			public Object getProperty(){return selectedJob.isNoNameMatch();};	
-			public String getPropertyDescription(){return "Do not use filename for file-matching"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setNoTimeMatch((Boolean)o);}
-			public Object getProperty(){return selectedJob.isNoTimeMatch();};	
-			public String getPropertyDescription(){return "Do not use last-modified time for file-matching"; };});
-		
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setName((String) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.getName();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Name";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setSimulteOnly((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isSimulateOnly();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Simulate only; do not modify target";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setIgnoreWarnings((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isIgnoreWarnings();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Ignore warnings; do not pause";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setNoRecurse((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isNoRecurse();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Do not recurse into subdirectories";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setNoNameMatch((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isNoNameMatch();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Do not use filename for file-matching";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setNoTimeMatch((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isNoTimeMatch();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Do not use last-modified time for file-matching";
+			};
+		});
+
 		// TIME TOLERANCE <<< Y U NO HAZ SETTER?!
-//		preference.add(new SettingKeyValue(){
-//			public void setProperty(Object o){selectedJob.setTimeTolerance((Long)o);} //method missing
-//			public Object getProperty(){return selectedJob.getTimeTolerance();};	
-//			public String getPropertyDescription(){return ""; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setNoCrcMatch((Boolean)o);}
-			public Object getProperty(){return selectedJob.isNoCrcMatch();};	
-			public String getPropertyDescription(){return "Do not use CRC-32 checksum for file-matching"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setRenameTarget((Boolean)o);}
-			public Object getProperty(){return selectedJob.isRenameTarget();};	
-			public String getPropertyDescription(){return "Rename matched target files"; };});
-		
-		preference.add(new SettingKeyValue(){
-			public void setProperty(Object o){selectedJob.setOverwriteTarget((Boolean)o);}
-			public Object getProperty(){return selectedJob.isOverwriteTarget();};	
-			public String getPropertyDescription(){return "Overwrite existing target files"; };});
-		
-//		preference.add(new SettingKeyValue(){
-//			//public void setProperty(Object o){selectedJob.setStdLog((Boolean)o);} //method missing
-//			public Object getProperty(){return selectedJob.isStdLog();};	
-//			public String getPropertyDescription(){return "Use std logging"; };});
-//		
-//		preference.add(new SettingKeyValue(){
-//			//public void setProperty(Object o){selectedJob.set((String)o);} //method missing
-//			public Object getProperty(){return selectedJob.getLogFile();};	
-//			public String getPropertyDescription(){return "Log File"; };});
-		
-//		preference.add(new SettingKeyValue(){
-//			public void setProperty(Object o){selectedJob.set((Boolean)o);} //method missing
-//			public Object getProperty(){return selectedJob.isSyncTimeOfTarget();};	
-//			public String getPropertyDescription(){return ""; };});
-		
-//		preference.add(new SettingKeyValue(){
-//			public void setProperty(Object o){selectedJob.setDeleteTarget((Boolean)o);} //method missing
-//			public Object getProperty(){return selectedJob.isDeleteTarget();};	
-//			public String getPropertyDescription(){return ""; };});
-		
+		// preference.add(new SettingKeyValue(){
+		// public void setProperty(Object o){_job.setTimeTolerance((Long)o);}
+		// //method missing
+		// public Object getProperty(){return _job.getTimeTolerance();};
+		// public String getPropertyDescription(){return ""; };});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setNoCrcMatch((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isNoCrcMatch();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Do not use CRC-32 checksum for file-matching";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setRenameTarget((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isRenameTarget();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Rename matched target files";
+			};
+		});
+
+		preference.add(new SettingKeyValue() {
+			@Override
+			public void setProperty(Object o) {
+				_job.setOverwriteTarget((Boolean) o);
+			}
+
+			@Override
+			public Object getProperty() {
+				return _job.isOverwriteTarget();
+			};
+
+			@Override
+			public String getPropertyDescription() {
+				return "Overwrite existing target files";
+			};
+		});
+
+		// preference.add(new SettingKeyValue(){
+		// //public void setProperty(Object o){_job.setStdLog((Boolean)o);}
+		// //method missing
+		// public Object getProperty(){return _job.isStdLog();};
+		// public String getPropertyDescription(){return "Use std logging";
+		// };});
+		//
+		// preference.add(new SettingKeyValue(){
+		// //public void setProperty(Object o){_job.set((String)o);} //method
+		// missing
+		// public Object getProperty(){return _job.getLogFile();};
+		// public String getPropertyDescription(){return "Log File"; };});
+
+		// preference.add(new SettingKeyValue(){
+		// public void setProperty(Object o){_job.set((Boolean)o);} //method
+		// missing
+		// public Object getProperty(){return _job.isSyncTimeOfTarget();};
+		// public String getPropertyDescription(){return ""; };});
+
+		// preference.add(new SettingKeyValue(){
+		// public void setProperty(Object o){_job.setDeleteTarget((Boolean)o);}
+		// //method missing
+		// public Object getProperty(){return _job.isDeleteTarget();};
+		// public String getPropertyDescription(){return ""; };});
+
 		return preference;
 	}
 
 	/**
 	 * Load all slaves in the job to the given tab folder
 	 * 
-	 * @param folder The tab folder to load the slaves in
+	 * @param folder
+	 *            The tab folder to load the slaves in
 	 */
 	private void loadSlaves(CTabFolder folder) {
 		for (String s : _job.getSlaves()) {
@@ -424,7 +547,8 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Add all available file system provider to a combobox
 	 * 
-	 * @param combo The combobox to which all the providers will be added
+	 * @param combo
+	 *            The combobox to which all the providers will be added
 	 */
 	private void addFileSystemProvider(ComboViewer combo) {
 		// create the input list
@@ -439,8 +563,10 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Show the file system in the given tree
 	 * 
-	 * @param tree The tree in which the files should be shown
-	 * @param provider The provider of the file system
+	 * @param tree
+	 *            The tree in which the files should be shown
+	 * @param provider
+	 *            The provider of the file system
 	 */
 	private void showFileSystem(TreeViewer tree, FileSystemProvider provider) {
 		if (provider != null) {
@@ -453,7 +579,8 @@ public class JobEditor extends EditorPart {
 	/**
 	 * Initialize the slave tab folder
 	 * 
-	 * @param folder The tab folder to initialize
+	 * @param folder
+	 *            The tab folder to initialize
 	 * @return The created treeviewer in the tab
 	 */
 	private TreeViewer initializeTab(CTabFolder folder,
@@ -477,6 +604,7 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void setFocus() {
+		_masterTabFolder.setFocus();
 		_slaveDirTabFolder.setFocus();
 	}
 }
