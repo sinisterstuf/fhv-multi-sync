@@ -14,9 +14,12 @@ public interface FileSystemProvider {
 	/**
 	 * Get all root folder of the file system
 	 * 
+	 * @param url
+	 *            The root url
+	 * 
 	 * @return An array of all root folders
 	 */
-	public File[] getRoot();
+	public File[] getRoot(String url);
 
 	/**
 	 * This method is used to determine if a protocol can be handled by the

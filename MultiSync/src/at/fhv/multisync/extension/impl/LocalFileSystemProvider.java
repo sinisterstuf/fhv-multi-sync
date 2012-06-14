@@ -15,7 +15,7 @@ public class LocalFileSystemProvider implements FileSystemProvider {
 	private final String _matchingProtocol = "^[a-zA-Z]://$";
 
 	@Override
-	public File[] getRoot() {
+	public File[] getRoot(String url) {
 		return File.listRoots();
 	}
 
