@@ -131,18 +131,18 @@ public class JobEditor extends EditorPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new GridLayout(3, true));
+		parent.setLayout(new GridLayout(3, false));
 
 		Label lblMaster = new Label(parent, SWT.NONE);
 		lblMaster.setText("Master");
 
 		Label lblSlaves = new Label(parent, SWT.NONE);
-		lblSlaves.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1));
+		lblSlaves.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+				false, 1, 1));
 		lblSlaves.setText("Slaves");
 
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
+		composite.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false,
 				1, 1));
 		composite.setLayout(new GridLayout(2, false));
 
@@ -305,8 +305,8 @@ public class JobEditor extends EditorPart {
 		tbtmPreferences.setControl(prefscroll);
 
 		_slaveDirTabFolder = new CTabFolder(parent, SWT.BORDER);
-		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
-				true, 2, 1));
+		_slaveDirTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+				false, true, 2, 1));
 		_slaveDirTabFolder.setSelectionBackground(Display.getCurrent()
 				.getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT));
 		_slaveDirTabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() {
