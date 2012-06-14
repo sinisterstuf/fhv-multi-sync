@@ -165,7 +165,7 @@ public class JobEditor extends EditorPart {
 				FileSystemProvider provider = (FileSystemProvider) selected
 						.getFirstElement();
 
-				initializeTab(_slaveDirTabFolder, provider);
+				initializeTab(_slaveDirTabFolder, provider, null);
 				setDirty(true);
 			}
 		});
@@ -187,7 +187,7 @@ public class JobEditor extends EditorPart {
 		String masterDir = (_job.getMaster() != null) ? _job.getMaster()
 				: "C://";
 		showFileSystem(_masterDirTree,
-				PluginHelper.getSuitableProvider(masterDir));
+				PluginHelper.getSuitableProvider(masterDir), _job.getMaster());
 
 		// set as selected
 		if (_masterDirTree != null && _job.getMaster() != null
@@ -235,6 +235,7 @@ public class JobEditor extends EditorPart {
 					@Override
 					public void mouseUp(MouseEvent e) {
 						pref.setProperty(button.getSelection());
+						setDirty(true);
 					}
 
 					@Override
@@ -536,7 +537,7 @@ public class JobEditor extends EditorPart {
 	private void loadSlaves(CTabFolder folder) {
 		for (String s : _job.getSlaves()) {
 			TreeViewer item = initializeTab(folder,
-					PluginHelper.getSuitableProvider(s));
+					PluginHelper.getSuitableProvider(s), s);
 
 			File slave = new File(s);
 			StructuredSelection sel = new StructuredSelection(slave);
@@ -567,12 +568,15 @@ public class JobEditor extends EditorPart {
 	 *            The tree in which the files should be shown
 	 * @param provider
 	 *            The provider of the file system
+	 * @param url
+	 *            The root url to load
 	 */
-	private void showFileSystem(TreeViewer tree, FileSystemProvider provider) {
+	private void showFileSystem(TreeViewer tree, FileSystemProvider provider,
+			String url) {
 		if (provider != null) {
 			tree.setContentProvider(new FileContentProvider());
 			tree.setLabelProvider(new FileLabelProvider());
-			tree.setInput(provider.getRoot());
+			tree.setInput(provider.getRoot(url));
 		}
 	}
 
@@ -581,10 +585,12 @@ public class JobEditor extends EditorPart {
 	 * 
 	 * @param folder
 	 *            The tab folder to initialize
+	 * @param url
+	 *            The root url
 	 * @return The created treeviewer in the tab
 	 */
 	private TreeViewer initializeTab(CTabFolder folder,
-			FileSystemProvider provider) {
+			FileSystemProvider provider, String url) {
 		CTabItem item = new CTabItem(folder, SWT.NONE);
 		item.setText("Slave");
 		item.setShowClose(true);
@@ -595,7 +601,7 @@ public class JobEditor extends EditorPart {
 
 		if (provider != null) {
 			// show the files
-			showFileSystem(treeViewer, provider);
+			showFileSystem(treeViewer, provider, url);
 			folder.setFocus();
 		}
 
